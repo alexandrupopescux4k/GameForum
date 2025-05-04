@@ -54,7 +54,7 @@ namespace GameForum.Repositories
                 return _GameRequestRepository;
             }
         }
-
+        
 
         private IReviewRepository? _ReviewRepository;
 

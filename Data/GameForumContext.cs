@@ -82,14 +82,4 @@ namespace GameForum.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
-    public class GameForumContextFactory : IDesignTimeDbContextFactory<GameForumContext>
-    {
-        public GameForumContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<GameForumContext>();
-            optionsBuilder.UseSqlServer("Server=DESKTOP-66DMPOH;Database=GameForumDB;Trust Server Certificate=True;Trusted_Connection=True;MultipleActiveResultSets=true");
-
-            return new GameForumContext(optionsBuilder.Options);
-        }
-    }
 }
