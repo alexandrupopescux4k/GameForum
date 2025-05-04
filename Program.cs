@@ -1,6 +1,8 @@
 using GameForum.Data;
+using GameForum.Models;
 using GameForum.Repositories;
 using GameForum.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,12 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddDbContext<GameForumContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<GameForumContext>();
+
+builder.Services.AddRazorPages();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,8 +38,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-//mamama
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapRazorPages(); // Needed for Identity UI to work
 
 app.MapStaticAssets();
 
