@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using GameForum.Models;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace GameForum.Data
@@ -80,6 +81,11 @@ namespace GameForum.Data
                 .WithMany(u => u.GameRequests)
                 .HasForeignKey(gr => gr.RequestedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<IdentityUserToken<string>>(b =>
+            {
+                b.Property(t => t.Name).HasMaxLength(128); // Default max length for Identity tokens
+            });
         }
     }
 }
