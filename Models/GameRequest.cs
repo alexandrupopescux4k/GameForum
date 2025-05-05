@@ -1,12 +1,6 @@
-﻿namespace GameForum.Models
+﻿using GameForum.Models.Enums;
+namespace GameForum.Models
 {
-    public enum RequestStatus
-    {
-        Pending,
-        Approved,
-        Rejected
-    }
-
     public class GameRequest
     {
         public int Id { get; set; }
@@ -17,7 +11,7 @@
         public User RequestedByUser { get; set; }
         public string RequestedByUserId { get; set; } 
 
-        public RequestStatus Status { get; set; } = RequestStatus.Pending; // default is Pending
+        public RequestStatus Status { get; set; } = RequestStatus.Pending;
 
         public DateTime RequestedAt { get; set; } = DateTime.UtcNow; 
     }

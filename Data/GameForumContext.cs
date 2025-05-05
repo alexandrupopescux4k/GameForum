@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using GameForum.Models;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.AspNetCore.Identity;
+using System.Reflection.Emit;
 
 
 namespace GameForum.Data
@@ -20,6 +21,8 @@ namespace GameForum.Data
         public DbSet<FavoriteGame> FavoriteGames { get; set; }
         public DbSet<GameRequest> GameRequests { get; set; }
         public DbSet<Vote> Votes { get; set; }
+        public DbSet<GameGameCategory> GameGameCategories { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -86,6 +89,14 @@ namespace GameForum.Data
             {
                 b.Property(t => t.Name).HasMaxLength(128); // Default max length for Identity tokens
             });
+
+            builder.Entity<GameGameCategory>()
+                .HasKey(gc => new { gc.GameId, gc.Category });
+
+            builder.Entity<GameGameCategory>()
+                .HasOne(gc => gc.Game)
+                .WithMany(g => g.GameCategories)
+                .HasForeignKey(gc => gc.GameId);
         }
     }
 }

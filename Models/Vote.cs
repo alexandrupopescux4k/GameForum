@@ -1,11 +1,7 @@
-﻿namespace GameForum.Models
+﻿using GameForum.Models.Enums;
+namespace GameForum.Models
 {
 
-    public enum VoteType
-    {
-        Upvote = 1,
-        Downvote = -1
-    }
     public class Vote
     {
         public int Id { get; set; }
