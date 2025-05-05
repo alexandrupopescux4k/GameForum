@@ -18,11 +18,13 @@ namespace GameForum.Repositories
         public void Create(T entity)
         {
             this.GameForumContext.Set<T>().Add(entity);
+            GameForumContext.SaveChanges();
         }
 
         public void Delete(T entity)
         {
             this.GameForumContext.Set<T>().Remove(entity);
+            GameForumContext.SaveChanges();
         }
 
         public IQueryable<T> FindAll()
@@ -38,6 +40,7 @@ namespace GameForum.Repositories
         public void Update(T entity)
         {
             this.GameForumContext.Set<T>().Update(entity);
+            GameForumContext.SaveChanges();
         }
     }
 }
