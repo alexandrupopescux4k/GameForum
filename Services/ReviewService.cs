@@ -1,4 +1,5 @@
-﻿using GameForum.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GameForum.Models;
 using GameForum.Repositories.Interfaces;
 using GameForum.Services.Interfaces;
 
@@ -38,7 +39,13 @@ namespace GameForum.Services
 
         public IEnumerable<Review> GetTop()
         {
-           return _repo.ReviewRepository.FindAll().OrderByDescending(x => x.Rating).Take(3).ToList();
+            return _repo.ReviewRepository
+             .FindAll()
+              .Include(r => r.Game)
+                 .Include(r => r.Author)
+                 .OrderByDescending(x => x.Upvotes + x.Downvotes)
+                 .Take(3)
+                 .ToList();
         }
     }
 }

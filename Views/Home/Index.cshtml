@@ -5,7 +5,7 @@
 
 <head>
     <link rel="stylesheet" href="~/css/home.css">
-    <link rel="stylesheet" href="~/css/review_cards.css"></link>
+    <link rel="stylesheet" href="~/css/review_cards.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
 
@@ -19,67 +19,76 @@
         @foreach (var game in Model.Top3Games)
         {
             <div class="game-card">
-                <div class="game-image-container">
-                    <img src="@(string.IsNullOrEmpty(game.ImageUrl) ? "/images/game-placeholder.jpg" : game.ImageUrl)" alt="@game.Title" class="game-image" />
+                <div class="game-card-inner">
+                    <div class="game-image-container">
+                        <img src="@(string.IsNullOrEmpty(game.ImageUrl) ? "/images/game-placeholder.jpg" : game.ImageUrl)" alt="@game.Title" class="game-image" />
+                        <div class="game-overlay">
+                            <a class="details-btn" asp-controller="Games" asp-action="Details" asp-route-id="@game.Id">
+                                Go to game
+                            </a>
+                        </div>
 
-                    <div class="game-badges">
-                        <span class="rating-badge">
-                            @game.AverageRating.ToString("0.0") <i class="fas fa-star"></i>
-                        </span>
+                        <div class="game-badges">
+                            <span class="rating-badge">
+                                @game.AverageRating.ToString("0.0") <i class="fas fa-star"></i>
+                            </span>
+                        </div>
                     </div>
-                </div>
-                <div class="game-info">
-                    <h3 class="game-title">@game.Title</h3>
+                    <div class="game-info">
+                        <h3 class="game-title">@game.Title</h3>
+                    </div>
                 </div>
             </div>
         }
     </div>
 
-
-<div class="header-section">
-    <h2 class="explorer-title">Popular Reviews</h2>
-</div>
-
-<div class="games-container">
-    <div class="review-card">
-        <div class="review-image-container">
-            <a href="/Games/Details/1">
-                <img src="https://static-cdn.jtvnw.net/ttv-boxart/36799602_IGDB-285x380.jpg" alt="Mock Game" class="game-image" />
-            </a>
-        </div>
-        <div class="review-info">
-            <h3 class="game-title">
-                <a href="/Games/Details/1">"Unknown Game"</a>
-            </h3>
-
-            <div class="rating-display">
-                <i class="fas fa-star"></i> 4
-            </div>
-
-            <div class="game-meta">
-                <span class="review-count">
-                    <i class="fas fa-user"></i> user1
-                </span>
-                <span class="review-count">
-                    <i class="fas fa-clock"></i> 2025-05-07
-                </span>
-            </div>
-
-            <p class="game-description">
-                This is a short mock review for demonstration purposes. It shows how the layout will appear for a typical review. You can extend this text to simulate longer reviews if needed...
-            </p>
-
-            <div class="vote-controls">
-                <form method="post" action="#">
-                    <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
-                    <span class="vote-count">10</span>
-                </form>
-                <form method="post" action="#">
-                    <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
-                </form>
-            <div class="replies-link">
-                <a href="/Replies/ForReview/1">View Replies (3)</a>
-            </div>
-        </div>
+    <div class="header-section left">
+        <h2 class="explorer-title">Popular Reviews</h2>
     </div>
-</div>
+    <div class="games-container">
+        @foreach (var review in Model.Top3Reviews)
+        {
+            <div class="review-card">
+                <div class="review-image-container">
+                    <a href="/Games/Details/@review.Game.Id">
+                        <img src="@(string.IsNullOrEmpty(review.Game.ImageUrl) ? "/images/game-placeholder.jpg" : review.Game.ImageUrl)" alt="@review.Game.Title" class="game-image" />
+                    </a>
+                </div>
+                <div class="review-info">
+                    <h3 class="game-title">
+                        <a href="/Games/Details/@review.Game.Id">@review.Game.Title</a>
+                    </h3>
+
+                    <div class="rating-display">
+                        <i class="fas fa-star"></i> @review.Rating
+                    </div>
+
+                    <div class="game-meta">
+                        <span class="review-count">
+                            <i class="fas fa-user"></i> @review.Author.UserName
+                        </span>
+                        <span class="review-count">
+                            <i class="fas fa-clock"></i> @review.CreatedAt.ToString("yyyy-MM-dd")
+                        </span>
+                    </div>
+
+                    <p class="game-description">
+                        @review.Content
+                    </p>
+
+                    <div class="vote-controls">
+                        <form method="post" action="#">
+                            <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
+                        </form>
+                        <span class="vote-count">@review.Upvotes</span>
+                        <form method="post" action="#">
+                            <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
+                        </form>
+                        <a asp-controller="Replies" asp-action="ForReview" asp-route-id="@review.Id" class="details-btn">
+                            Go to thread
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
