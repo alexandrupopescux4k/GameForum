@@ -34,45 +34,74 @@
 
 /* Grid for Top Games */
 .home-grid {
-    display: flex;
-    justify-content: center;
-    gap: 2.5rem; /* Increased spacing between cards */
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 4rem; 
     margin-bottom: 3rem;
+    justify-content: center;
+    max-width: 1000px; 
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Game Card */
+@media (min-width: 768px) {
+    .home-grid {
+        grid-template-columns: repeat(3, minmax(240px, 280px)); 
+    }
+}
+
 .game-card {
-    width: 300px;
-    background: #fff;
+    height: 100%;
+    background-color: white;
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
-    transition: var(--transition);
     overflow: hidden;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
 }
+.game-card-inner {
+    display: flex;
+    flex-direction: column;
 
+    height: 100%;
+    width: 100%;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    transition: var(--transition);
+}
     .game-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
-
+        .game-card-inner {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
 .game-image-container {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+
     position: relative;
     height: 300px;
     background-color: #f0f0f0;
     overflow: hidden;
 }
 
-
 .game-image {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    display: block;
     transition: var(--transition);
 }
 
 .game-card:hover .game-image {
-    transform: scale(1.05);
+    transform: scale(1.16);
 }
 
 .game-info {
@@ -81,8 +110,9 @@
 }
 
 .game-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
+    margin: 0;
     color: var(--dark-color);
     transition: var(--transition);
 }
@@ -114,4 +144,43 @@
 
     .rating-badge i {
         color: #ffdd00;
+    }
+
+.header-section.left {
+    text-align: left;
+}
+
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.game-card:hover .game-overlay {
+    opacity: 1;
+}
+
+.details-btn {
+    background-color: #BF40BF;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    border-radius: 20px;
+}
+
+    .details-btn:hover {
+        background-color: #800080;
+        transform: scale(1.05);
     }

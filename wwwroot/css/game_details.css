@@ -1,0 +1,167 @@
+﻿:root {
+    --primary-color: #7b2cbf;
+    --primary-light: #9d4edd;
+    --secondary-color: #48bfe3;
+    --dark-color: #1a1a2e;
+    --light-color: #f8f9fa;
+    --success-color: #06d6a0;
+    --warning-color: #ffb703;
+    --danger-color: #ef476f;
+    --border-radius: 8px;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+.game-details-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.game-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.game-content {
+    display: flex;
+    gap: 2rem;
+}
+
+.game-sidebar {
+    flex: 0 0 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-image-container {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1rem;
+    width: 100%;
+    text-align: center;
+}
+
+.game-image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+    object-fit: cover;
+}
+
+.rating-badge {
+    background-color: rgba(26, 26, 46, 0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.game-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.game-description {
+    font-size: 1rem;
+    color: #495057;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+.game-tabs {
+    margin-top: 0;
+}
+
+.nav-tabs {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tab-item {
+    margin-right: 0.5rem;
+}
+
+.tab-link {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .tab-link i {
+        margin-right: 8px;
+    }
+
+.tab-item.active .tab-link {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-link:hover:not(.active) {
+    color: var(--primary-light);
+    border-bottom-color: #e9ecef;
+}
+
+.tab-content {
+    background-color: white;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    min-height: 300px;
+    margin-top: 1rem;
+}
+
+.tab-pane {
+    display: none;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+    .tab-pane.active {
+        display: block;
+    }
+
+
+.favorite-form {
+    margin-top: 1rem;
+    width: 100%;
+    text-align: center;
+}
+
+.favorite-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+    .favorite-btn:hover {
+        background-color: var(--primary-light);
+    }
