@@ -38,7 +38,7 @@ namespace GameForum.Controllers
         }
 
 
-
+        
         // GET: Games/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -47,8 +47,7 @@ namespace GameForum.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Games
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var game = _gameService.GetById(id.Value);
             if (game == null)
             {
                 return NotFound();
