@@ -25,9 +25,9 @@
                 </div>
                 <div class="category-controls">
                     <select class="sort-select" data-category="@category" onchange="sortGames('@category')">
-                        <option value="rating">Sort by Rating</option>
-                        <option value="name">Sort Alphabetically</option>
-                        <option value="reviews">Sort by Reviews</option>
+                        <option class="fw-bold" value="rating">Sort by Rating</option>
+                        <option class="fw-bold" value="name">Sort Alphabetically</option>
+                        <option class="fw-bold" value="reviews">Sort by Reviews</option>
                     </select>
                     <button class="category-expand-btn" onclick="toggleCategory('@category')">
                         <i class="fas fa-chevron-up"></i>
@@ -43,7 +43,7 @@
                             <div class="game-image-container">
                                 <img src="@(string.IsNullOrEmpty(game.ImageUrl) ? "/images/game-placeholder.jpg" : game.ImageUrl)" alt="@game.Title" class="game-image" />
                                 <div class="game-overlay">
-                                    <a href="/Games/Details/@game.Id" class="details-btn">View Details</a>
+                                    <a href="/Games/Details/@game.Id" class="details-btn">Go to game</a>
                                 </div>
                                 <div class="game-badges">
                                     <span class="rating-badge">
@@ -70,14 +70,14 @@
 
 @section Scripts {
     <script>
-        // Initialize Font Awesome
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            // Load Font Awesome
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
             document.head.appendChild(link);
 
-            // Initialize sorting for each category
+            // Auto-sort each category on load
             document.querySelectorAll('.sort-select').forEach(select => {
                 sortGames(select.dataset.category);
             });
@@ -89,30 +89,36 @@
             const sortBy = document.querySelector(`.sort-select[data-category='${category}']`).value;
 
             cards.sort((a, b) => {
-                if (sortBy === "rating") {
-                    return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
-                } else if (sortBy === "name") {
-                    return a.dataset.name.localeCompare(b.dataset.name);
-                } else if (sortBy === "reviews") {
-                    return parseInt(b.dataset.reviews) - parseInt(a.dataset.reviews);
+                const ratingA = parseFloat(a.dataset.rating) || 0;
+                const ratingB = parseFloat(b.dataset.rating) || 0;
+                const nameA = a.dataset.name.toLowerCase();
+                const nameB = b.dataset.name.toLowerCase();
+                const reviewsA = parseInt(a.dataset.reviews) || 0;
+                const reviewsB = parseInt(b.dataset.reviews) || 0;
+
+                switch (sortBy) {
+                    case "rating":
+                        return ratingB - ratingA;
+                    case "name":
+                        return nameA.localeCompare(nameB);
+                    case "reviews":
+                        return reviewsB - reviewsA;
+                    default:
+                        return 0;
                 }
-                return 0;
             });
 
+            // Reorder cards in DOM
             cards.forEach(card => container.appendChild(card));
         }
 
         function toggleCategory(category) {
             const container = document.getElementById(`games-${category}`);
-            const button = document.querySelector(`#category-${category.toString().toLowerCase()} .category-expand-btn i`);
+            const icon = document.querySelector(`#category-${category.toLowerCase()} .category-expand-btn i`);
 
-            if (container.style.display === 'none') {
-                container.style.display = '';
-                button.className = 'fas fa-chevron-up';
-            } else {
-                container.style.display = 'none';
-                button.className = 'fas fa-chevron-down';
-            }
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? '' : 'none';
+            icon.className = isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
         }
     </script>
 }
