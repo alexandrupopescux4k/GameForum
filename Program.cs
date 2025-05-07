@@ -20,7 +20,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 
 builder.Services.AddScoped<IGameService, GameService>();
-
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 builder.Services.AddDbContext<GameForumContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

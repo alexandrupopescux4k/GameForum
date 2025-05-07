@@ -1,8 +1,85 @@
-﻿@{
+﻿@model GameForum.Models.ViewModels.HomePageViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core!!!!</a>.</p>
+<head>
+    <link rel="stylesheet" href="~/css/home.css">
+    <link rel="stylesheet" href="~/css/review_cards.css"></link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+
+</head>
+<div class="home-container">
+    <div class="header-section">
+        <h2 class="explorer-title">Popular Games</h2>
+    </div>
+
+    <div class="home-grid">
+        @foreach (var game in Model.Top3Games)
+        {
+            <div class="game-card">
+                <div class="game-image-container">
+                    <img src="@(string.IsNullOrEmpty(game.ImageUrl) ? "/images/game-placeholder.jpg" : game.ImageUrl)" alt="@game.Title" class="game-image" />
+
+                    <div class="game-badges">
+                        <span class="rating-badge">
+                            @game.AverageRating.ToString("0.0") <i class="fas fa-star"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">@game.Title</h3>
+                </div>
+            </div>
+        }
+    </div>
+
+
+<div class="header-section">
+    <h2 class="explorer-title">Popular Reviews</h2>
+</div>
+
+<div class="games-container">
+    <div class="review-card">
+        <div class="review-image-container">
+            <a href="/Games/Details/1">
+                <img src="https://static-cdn.jtvnw.net/ttv-boxart/36799602_IGDB-285x380.jpg" alt="Mock Game" class="game-image" />
+            </a>
+        </div>
+        <div class="review-info">
+            <h3 class="game-title">
+                <a href="/Games/Details/1">"Unknown Game"</a>
+            </h3>
+
+            <div class="rating-display">
+                <i class="fas fa-star"></i> 4
+            </div>
+
+            <div class="game-meta">
+                <span class="review-count">
+                    <i class="fas fa-user"></i> user1
+                </span>
+                <span class="review-count">
+                    <i class="fas fa-clock"></i> 2025-05-07
+                </span>
+            </div>
+
+            <p class="game-description">
+                This is a short mock review for demonstration purposes. It shows how the layout will appear for a typical review. You can extend this text to simulate longer reviews if needed...
+            </p>
+
+            <div class="vote-controls">
+                <form method="post" action="#">
+                    <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
+                    <span class="vote-count">10</span>
+                </form>
+                <form method="post" action="#">
+                    <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
+                </form>
+            <div class="replies-link">
+                <a href="/Replies/ForReview/1">View Replies (3)</a>
+            </div>
+        </div>
+    </div>
 </div>
