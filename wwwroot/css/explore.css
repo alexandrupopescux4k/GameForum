@@ -61,8 +61,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem;
-    background-color: #f8f9fa;
+    background-color: #f0dcf2;
     border-bottom: 1px solid #e9ecef;
+    border-radius: 20px;
 }
 
 .category-title-wrapper {
@@ -84,7 +85,7 @@
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 0.8rem;
-    font-weight: 500;
+    font-weight: bold;
 }
 
 .category-controls {
@@ -98,9 +99,17 @@
     border: 1px solid #e9ecef;
     background-color: white;
     font-size: 0.9rem;
+    font-weight: bold;
     margin-right: 12px;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
+
+    .sort-select:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5); /* white glow */
+    }
+
 
 .category-expand-btn {
     background: none;
@@ -166,7 +175,7 @@
 }
 
 .game-card:hover .game-image {
-    transform: scale(1.05);
+    transform: scale(1.16);
 }
 
 /* Game Overlay */
@@ -189,18 +198,19 @@
 }
 
 .details-btn {
-    background-color: var(--secondary-color);
+    background-color: #BF40BF;
     color: white;
     padding: 8px 16px;
     border-radius: 4px;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: bold;
     font-size: 0.9rem;
     transition: var(--transition);
+    border-radius: 20px;
 }
 
     .details-btn:hover {
-        background-color: #219ebc;
+        background-color: #800080;
         transform: scale(1.05);
     }
 
