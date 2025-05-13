@@ -19,7 +19,16 @@ public class UserController : Controller
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await _userService.GetUserByIdAsync(userId);
+        ViewData["IsPublicProfile"] = false;
         return View(user);
+    }
+
+    [Route("User/PublicProfile/{userId}")]
+    public async Task<IActionResult> PublicProfile(string userId)
+    {
+        var user = await _userService.GetUserByIdAsync(userId);
+        ViewData["IsPublicProfile"] = true;
+        return View("Profile", user); ;
     }
 
     [HttpPost]
