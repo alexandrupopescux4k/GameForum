@@ -65,14 +65,21 @@
 
                     <div class="game-meta">
                         <span class="review-count">
-                            <i class="fas fa-user"></i> @review.Author.UserName
+                             <i class="fas fa-user"></i>
+                            <span class="user-title">
+                                <a asp-controller="User"
+                                   asp-action="PublicProfile"
+                                   asp-route-userId="@review.AuthorId">
+                                    @review.Author.UserName
+                                </a>
+                            </span>
                         </span>
                         <span class="review-count">
                             <i class="fas fa-clock"></i> @review.CreatedAt.ToString("yyyy-MM-dd")
                         </span>
                     </div>
 
-                    <p class="game-description">
+                    <p class="game-description my-4">
                         @review.Content
                     </p>
 
@@ -84,8 +91,8 @@
                         <form method="post" action="#">
                             <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
                         </form>
-                        <a asp-controller="Replies" asp-action="ForReview" asp-route-id="@review.Id" class="details-btn">
-                            Go to thread
+                        <a asp-controller="Replies" asp-action="ForReview" asp-route-id="@review.Id" class="details-btn mx-5">
+                            Open thread
                         </a>
                     </div>
                 </div>

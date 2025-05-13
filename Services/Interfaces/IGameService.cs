@@ -6,6 +6,7 @@ namespace GameForum.Services.Interfaces
     {
         IEnumerable<Game> GetAll();
         Game GetById(int id);
+        Game GetByIdWithPosts(int id);
         IEnumerable<Game> GetTop();
         IEnumerable<Game> GetByCategory(GameCategory category);
         IEnumerable<Game> GetAllWithCategories();

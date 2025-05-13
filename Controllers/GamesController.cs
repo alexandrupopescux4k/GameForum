@@ -10,6 +10,7 @@ using GameForum.Models;
 using GameForum.Services.Interfaces;
 using GameForum.Models.Enums;
 using GameForum.Models.ViewModels;
+using GameForum.Repositories.Interfaces;
 
 namespace GameForum.Controllers
 {
@@ -17,10 +18,16 @@ namespace GameForum.Controllers
     {
         private readonly GameForumContext _context;
         private readonly IGameService _gameService;
+        private readonly IUserService _userService;
+        private readonly IReviewService _reviewService;
+        private readonly IDiscussionService _discussionService;
 
-        public GamesController(IGameService gameService)
+        public GamesController(IGameService gameService,IUserService userService,IReviewService reviewService, IDiscussionService discussionService)
         {
             _gameService = gameService;
+            _userService = userService;
+            _reviewService = reviewService;
+            _discussionService = discussionService;
         }
 
         // GET: Games
@@ -43,15 +50,20 @@ namespace GameForum.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var game = _gameService.GetById(id.Value);
+            var game = _gameService.GetByIdWithPosts(id.Value);
             if (game == null)
-            {
                 return NotFound();
-            }
+
+           
+
+            //var viewModel = new GameViewModel
+            //{
+            //    Game = game,
+            //    GameReviews = _reviewService.GetReviewsByGameId(game.Id),
+            //    GetDiscussions = _discussionService.GetDiscussionByGameId(game.Id)
+            //};
 
             return View(game);
         }
