@@ -44,5 +44,10 @@ namespace GameForum.Services
         }
 
         public void AddGame(Game game) => _repo.GameRepository.Create(game);
+
+        public Game GetByIdWithPosts(int id)
+        {
+            return _repo.GameRepository.GetByIdWithPosts(id);
+        }
     }
 }

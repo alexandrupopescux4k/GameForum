@@ -80,13 +80,14 @@
     color: #ffb703;
 }
 
-
 .vote-controls {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 0.5rem;
     margin-top: 1rem;
 }
+
+
 
 .vote-btn {
     background: none;
@@ -127,4 +128,16 @@
 
     .replies-link a:hover {
         color: #7b2cbf; 
+    }
+
+.user-title a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+    .user-title a:hover {
+        color: #5a1a8b;
+        text-decoration: none;
     }

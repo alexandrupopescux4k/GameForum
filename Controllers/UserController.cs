@@ -26,8 +26,17 @@ public class UserController : Controller
     [Route("User/PublicProfile/{userId}")]
     public async Task<IActionResult> PublicProfile(string userId)
     {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         var user = await _userService.GetUserByIdAsync(userId);
-        ViewData["IsPublicProfile"] = true;
+        if (currentUserId == userId)
+        {
+            ViewData["IsPublicProfile"] = false;
+        }
+        else
+        {
+            ViewData["IsPublicProfile"] = true;
+        }
         return View("Profile", user); ;
     }
 

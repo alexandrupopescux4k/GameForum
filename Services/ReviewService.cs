@@ -29,7 +29,10 @@ namespace GameForum.Services
 
         public IEnumerable<Review> GetReviewsByGameId(int gameId)
         {
-            return _repo.ReviewRepository.FindByCondition(r => r.GameId == gameId).ToList();
+            return _repo.ReviewRepository
+                .FindByCondition(r => r.GameId == gameId)
+                .Include(r => r.Author) 
+                .ToList();
         }
 
         public IEnumerable<Review> GetReviewsByUserId(string userId)

@@ -1,5 +1,5 @@
-﻿@model GameForum.Models.Game
-
+﻿@*@model GameForum.Models.ViewModels.GameViewModel*@
+@model GameForum.Models.Game
 @{
     ViewData["Title"] = @Model.Title;
 }
@@ -19,13 +19,25 @@
             <div class="game-image-container">
                 <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/game-placeholder.jpg" : Model.ImageUrl)" alt="@Model.Title" class="game-image" />
             </div>
-            <div class="game-rating">
-                <i class="fas fa-star"></i> @Model.AverageRating.ToString("0.0")
+            <div class="game-rating fw-bold">
+                <i class="fas fa-star "></i> @Model.AverageRating.ToString("0.0")
             </div>
             <form method="post" asp-action="AddToFavorites" asp-controller="Games" class="favorite-form">
                 <input type="hidden" name="gameId" value="@Model.Id" />
                 <button type="submit" class="favorite-btn">
                     <i class="fas fa-heart"></i> Add to Favorites
+                </button>
+            </form>
+            <form method="get" asp-controller="Reviews" asp-action="Create" class="favorite-form">
+                <input type="hidden" name="gameId" value="@Model.Id" />
+                <button type="submit" class="favorite-btn" >
+                    <i class="fas fa-pen"></i> Review Game
+                </button>
+            </form>
+            <form method="get" asp-controller="Discussions" asp-action="Create" class="favorite-form">
+                <input type="hidden" name="gameId" value="@Model.Id" />
+                <button type="submit" class="favorite-btn">
+                    <i class="fas fa-comments"></i> Start Discussion
                 </button>
             </form>
         </div>
@@ -46,20 +58,123 @@
 
                 <div class="tab-content">
                     <div id="description" class="tab-pane active">
-                        <h3>Description</h3>
                         <p>@Model.Description</p>
                     </div>
                     <div id="reviews" class="tab-pane">
-                        <p>No reviews yet for this game.</p>
+                        @if (Model.Reviews != null && Model.Reviews.Any())
+                        {
+                            foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                            {
+                                <div class="review-item">
+                                    <div class="review-meta">
+                                        <div class="review-author">
+                                            <div class="review-author-avatar">
+                                                @(review.Author.UserName.Length > 0
+                                                        ? review.Author.UserName[0].ToString().ToUpper()
+                                                        : "U")
+                                            </div>
+                                            <span class="user-title">
+                                                <a asp-controller="User"
+                                                asp-action="PublicProfile"
+                                                asp-route-userId="@review.Author.Id">
+                                                    @review.Author.UserName
+                                                </a>
+                                            </span>
+                                            <span class="review-rating mx-2 fs-6">
+                                                <i class="fas fa-star"></i> @review.Rating/10
+                                            </span>
+                                        </div>
+
+                                        <div class="review-info">
+                                            <span class="review-date">@review.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                    </div>
+                                    <div class="review-content">
+                                        @review.Content
+
+                                        <div class="vote-controls">
+                                            <form method="post" action="#">
+                                                <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
+                                            </form>
+                                            <span class="vote-count">@review.Upvotes</span>
+                                            <form method="post" action="#">
+                                                <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
+                                            </form>
+                                            <a asp-controller="Replies" asp-action="ForReview" asp-route-id="@review.Id" class="details-btn mx-5">
+                                                Open thread
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="no-reviews">
+                                <i class="fas fa-comment-slash"></i>
+                                <p>No reviews yet for this game. Be the first to share your thoughts!</p>
+                            </div>
+                        }
                     </div>
                     <div id="discussions" class="tab-pane">
-                        <p>No discussions yet for this game.</p>
+                        @if (Model.Discussions != null && Model.Discussions.Any())
+                                    {
+                            foreach (var discussion in Model.Discussions.OrderByDescending(d => d.CreatedAt))
+                            {
+                                <div class="review-item">
+                                    <div class="review-meta">
+                                        <div class="review-author">
+                                            <div class="review-author-avatar">
+                                                @(discussion.Author?.UserName?.FirstOrDefault().ToString().ToUpper() ?? "U")
+                                            </div>
+                                            <span class="user-title">
+                                                <a asp-controller="User"
+                                                   asp-action="PublicProfile"
+                                                   asp-route-userId="@discussion.AuthorId">
+                                                    @discussion.Author?.UserName
+                                                </a>
+                                            </span>
+                                        </div>
+
+                                        <div class="review-info">
+                                            <span class="review-date">@discussion.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                    </div>
+                                    <div class="review-content">
+                                        @discussion.Content
+
+                                        <div class="vote-controls">
+                                            <form method="post" action="#">
+                                                <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
+                                            </form>
+                                            <span class="vote-count">@discussion.Upvotes</span>
+                                            <form method="post" action="#">
+                                                <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
+                                            </form>
+                                            <a asp-controller="Replies" asp-action="ForDiscussion" asp-route-id="@discussion.Id" class="details-btn">
+                                                Open thread
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="no-reviews">
+                                <i class="fas fa-comment-slash"></i>
+                                <p>No discussions yet for this game. Start the conversation!</p>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
 
 @section Scripts {
     <script>
@@ -75,7 +190,7 @@
             document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
             document.querySelector(`#${tabId}-tab`).parentElement.classList.add('active');
         }
-
+        
         // Optional: Initialize tab visibility on load
         document.addEventListener("DOMContentLoaded", () => {
             switchGameTab('description');
