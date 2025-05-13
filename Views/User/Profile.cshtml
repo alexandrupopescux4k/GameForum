@@ -11,9 +11,12 @@
 <div class="profile-container">
     <div class="profile-header">
         <h1 class="profile-title"><i class="fas fa-user-circle"></i> @Model.UserName</h1>
-        <button id="edit-profile-btn" class="edit-profile-btn" onclick="toggleEditMode()">
-            <i class="fas fa-edit"></i> Edit Profile
-        </button>
+        @if (ViewData["IsPublicProfile"] != null && (bool)ViewData["IsPublicProfile"] == false)
+        {
+            <button id="edit-profile-btn" class="edit-profile-btn" onclick="toggleEditMode()">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        }
     </div>
 
     <div class="profile-content">
