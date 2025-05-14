@@ -8,6 +8,7 @@
         IReviewRepository ReviewRepository { get; }
         IUserRepository UserRepository { get; }
         IReplyRepository ReplyRepository { get; }
+        IVoteRepository VoteRepository { get; }
         void Save();
     }
 }

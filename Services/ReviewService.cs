@@ -52,7 +52,7 @@ namespace GameForum.Services
              .FindAll()
               .Include(r => r.Game)
                  .Include(r => r.Author)
-                 .OrderByDescending(x => x.Upvotes + x.Downvotes)
+                 .OrderByDescending(x => x.VoteNumber)
                  .Take(3)
                  .ToList();
         }
@@ -72,8 +72,7 @@ namespace GameForum.Services
                 existingReview.Content = content;
                 existingReview.Rating = rating;
                 existingReview.CreatedAt = DateTime.UtcNow;
-                existingReview.Upvotes = 0;
-                existingReview.Downvotes = 0;
+                existingReview.VoteNumber = 0;
                 foreach (var reply in existingReview.Replies.ToList())
                 {
                     _repo.ReplyRepository.Delete(reply);
@@ -90,8 +89,7 @@ namespace GameForum.Services
                     Content = content,
                     Rating = rating,
                     CreatedAt = DateTime.UtcNow,
-                    Upvotes = 0,
-                    Downvotes = 0
+                    VoteNumber = 0
                 };
 
                 _repo.ReviewRepository.Create(newReview);

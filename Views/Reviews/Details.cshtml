@@ -50,7 +50,7 @@
                 <div class="review-interactions">
                     <div class="vote-controls">
                         <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
-                        <span class="vote-count">@Model.Upvotes</span>
+                        <span class="vote-count">@Model.VoteNumber</span>
                         <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
                     </div>
                     <button class="reply-button" onclick="openReplyForm()">
@@ -124,7 +124,7 @@
                                 <form method="post" action="#">
                                     <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
                                 </form>
-                                <span class="vote-count">@reply.Upvotes</span>
+                                <span class="vote-count">@reply.VoteNumber</span>
                                 <form method="post" action="#">
                                     <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
                                 </form>

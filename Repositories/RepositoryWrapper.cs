@@ -104,6 +104,22 @@ namespace GameForum.Repositories
             }
         }
 
+        private IVoteRepository? _VoteRepository;
+
+        public IVoteRepository VoteRepository
+        {
+            get
+            {
+                if (_VoteRepository == null)
+                {
+                    _VoteRepository = new VoteRepository(_gameforumContext);
+                }
+
+                return _VoteRepository;
+            }
+        }
+
+
         public RepositoryWrapper(GameForumContext gameforumContext)
         {
             _gameforumContext = gameforumContext;

@@ -445,3 +445,22 @@
     object-fit: cover;
 }
 
+
+.game-description {
+    background: linear-gradient(135deg, #f0f0f0, #e6e6e6); /* subtle gradient */
+    padding: 24px;
+    border-radius: 12px;
+    font-style: italic;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    line-height: 1.8;
+    margin-bottom: 24px;
+    border-left: 5px solid #550080; /* a blue accent bar on the left */
+    transition: all 0.3s ease;
+}
+
+    .game-description:hover {
+        background: linear-gradient(135deg, #e6e6e6, #f0f0f0);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }

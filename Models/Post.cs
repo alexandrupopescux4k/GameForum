@@ -7,13 +7,10 @@
         public User Author { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int Upvotes { get; set; }
-        public int Downvotes { get; set; }
-
-        public int? GameId { get; set; } 
+        public int VoteNumber { get; set; }  // Single count representing net votes
+        public int? GameId { get; set; }
         public Game Game { get; set; }
-
-        public List<Vote> Votes { get; set; }
-        public List<Reply> Replies { get; set; }  
+        public List<Vote> Votes { get; set; }  // Keep this collection for vote tracking
+        public List<Reply> Replies { get; set; }
     }
 }

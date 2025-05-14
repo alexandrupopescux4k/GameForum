@@ -50,8 +50,7 @@ namespace GameForum.Controllers
                 CreatedAt = DateTime.UtcNow,
                 ParentPostId = ParentReplyId ?? ReviewId,
                 GameId = null,
-                Upvotes = 0,
-                Downvotes = 0
+                VoteNumber=0,
             };
 
             _replyService.AddReply(reply);
