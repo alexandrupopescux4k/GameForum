@@ -88,6 +88,22 @@ namespace GameForum.Repositories
             }
         }
 
+
+        private IReplyRepository? _ReplyRepository;
+
+        public IReplyRepository ReplyRepository
+        {
+            get
+            {
+                if (_ReplyRepository == null)
+                {
+                    _ReplyRepository = new ReplyRepository(_gameforumContext);
+                }
+
+                return _ReplyRepository;
+            }
+        }
+
         public RepositoryWrapper(GameForumContext gameforumContext)
         {
             _gameforumContext = gameforumContext;

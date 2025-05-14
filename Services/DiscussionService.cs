@@ -33,6 +33,8 @@ namespace GameForum.Services
             return _repo.DiscussionRepository
                     .FindByCondition(d => d.Id == id)
                     .Include(d => d.Author)
+                    .Include(d => d.Replies)
+                    .ThenInclude(reply=>reply.Author)
                     .FirstOrDefault();
         }
 
@@ -40,7 +42,7 @@ namespace GameForum.Services
         {
             return _repo.DiscussionRepository
                 .FindByCondition(d => d.GameId == gameId)
-                 .Include(d => d.Author) 
+                 .Include(d => d.Author).Include(re => re.Replies)
                 .ToList();
         }
 
