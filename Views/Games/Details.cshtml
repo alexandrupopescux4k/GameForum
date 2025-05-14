@@ -28,12 +28,9 @@
                     <i class="fas fa-heart"></i> Add to Favorites
                 </button>
             </form>
-            <form method="get" asp-controller="Reviews" asp-action="Create" class="favorite-form">
-                <input type="hidden" name="gameId" value="@Model.Id" />
-                <button type="submit" class="favorite-btn" >
-                    <i class="fas fa-pen"></i> Review Game
-                </button>
-            </form>
+            <button type="button" class="favorite-btn favorite-form" onclick="openReviewModal()">
+                <i class="fas fa-pen"></i> Review Game
+            </button>
             <form method="get" asp-controller="Discussions" asp-action="Create" class="favorite-form">
                 <input type="hidden" name="gameId" value="@Model.Id" />
                 <button type="submit" class="favorite-btn">
@@ -173,6 +170,28 @@
     </div>
 </div>
 
+<div id="reviewModal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>Write a Review</h2>
+        <form id="reviewForm" method="post" action="/Games/SubmitReview">
+            <input type="hidden" name="GameId" value="@Model.Id" />
+            <div class="form-group">
+                <label for="Content">Your Review</label>
+                <textarea name="Content" id="Content" required rows="4" placeholder="Share your thoughts..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="Rating">Rating (1-10)</label>
+                <input type="number" name="Rating" id="Rating" min="1" max="10" required />
+            </div>
+            <div class="modal-buttons">
+                <button type="submit" class="details-btn">Submit</button>
+                <button type="button" class="details-btn" onclick="closeReviewModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 
 
 
@@ -194,6 +213,22 @@
         // Optional: Initialize tab visibility on load
         document.addEventListener("DOMContentLoaded", () => {
             switchGameTab('description');
+        });
+
+
+            function openReviewModal() {
+            document.getElementById("reviewModal").style.display = "flex";
+        }
+
+        function closeReviewModal() {
+            document.getElementById("reviewModal").style.display = "none";
+        }
+
+        window.addEventListener("click", function (event) {
+            const modal = document.getElementById("reviewModal");
+            if (event.target === modal) {
+                closeReviewModal();
+            }
         });
     </script>
 }

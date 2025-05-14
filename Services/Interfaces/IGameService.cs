@@ -11,5 +11,6 @@ namespace GameForum.Services.Interfaces
         IEnumerable<Game> GetByCategory(GameCategory category);
         IEnumerable<Game> GetAllWithCategories();
         void AddGame(Game game);
+        void UpdateRating(int rating,int gameId);
     }
 }

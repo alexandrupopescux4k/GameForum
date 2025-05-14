@@ -11,5 +11,7 @@ namespace GameForum.Services.Interfaces
         IEnumerable<Review> GetReviewsByGameId(int gameId);
         IEnumerable<Review> GetReviewsByUserId(string userId);
         void AddReview(Review review);
+        Review AddOrUpdateReview(string userId, int gameId, string content, int rating);
+
     }
 }
