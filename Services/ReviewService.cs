@@ -25,14 +25,19 @@ namespace GameForum.Services
 
         public Review GetById(int id)
         {
-          return _repo.ReviewRepository.FindByCondition(x => x.Id == id).FirstOrDefault();
+            return _repo.ReviewRepository
+              .FindByCondition(r => r.Id == id)
+             .Include(r => r.Author)
+             .Include(r => r.Replies)
+                 .ThenInclude(reply => reply.Author)
+             .FirstOrDefault();
         }
 
         public IEnumerable<Review> GetReviewsByGameId(int gameId)
         {
             return _repo.ReviewRepository
                 .FindByCondition(r => r.GameId == gameId)
-                .Include(r => r.Author) 
+                .Include(r => r.Author).Include(re => re.Replies) 
                 .ToList();
         }
 
@@ -56,6 +61,7 @@ namespace GameForum.Services
         {
             var existingReview = _repo.ReviewRepository
                 .FindByCondition(r => r.AuthorId == userId && r.GameId == gameId)
+                .Include(r => r.Replies)
                 .FirstOrDefault();
 
             var newReview = new Review();
@@ -66,7 +72,11 @@ namespace GameForum.Services
                 existingReview.Content = content;
                 existingReview.Rating = rating;
                 existingReview.CreatedAt = DateTime.UtcNow;
-
+                existingReview.VoteNumber = 0;
+                foreach (var reply in existingReview.Replies.ToList())
+                {
+                    _repo.ReplyRepository.Delete(reply);
+                }
                 _repo.ReviewRepository.Update(existingReview);
             }
             else

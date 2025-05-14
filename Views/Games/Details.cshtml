@@ -67,9 +67,16 @@
                                     <div class="review-meta">
                                         <div class="review-author">
                                             <div class="review-author-avatar">
-                                                @(review.Author.UserName.Length > 0
-                                                            ? review.Author.UserName[0].ToString().ToUpper()
-                                                            : "U")
+                                                @if (!string.IsNullOrEmpty(review.Author.ProfileImg))
+                                                {
+                                                    <img src="@review.Author.ProfileImg" alt="Profile Image" class="author-image"/>
+                                                }
+                                                else
+                                                {
+                                                    @(review.Author.UserName.Length > 0
+                                                        ? review.Author.UserName[0].ToString().ToUpper()
+                                                        : "U")
+                                                }
                                             </div>
                                             <span class="user-title">
                                                 <a asp-controller="User"
@@ -102,7 +109,7 @@
                                                     <i class="fas fa-thumbs-down"></i>
                                                 </button>
                                             </form>
-                                            <a asp-controller="Replies" asp-action="ForReview" asp-route-id="@review.Id" class="details-btn mx-5">
+                                            <a asp-controller="Reviews" asp-action="Details" asp-route-id="@review.Id" class="details-btn mx-5">
                                                 Open thread
                                             </a>
                                         </div>
@@ -129,7 +136,16 @@
                                     <div class="review-meta">
                                         <div class="review-author">
                                             <div class="review-author-avatar">
-                                                @(discussion.Author?.UserName?.FirstOrDefault().ToString().ToUpper() ?? "U")
+                                                @if (!string.IsNullOrEmpty(discussion.Author.ProfileImg))
+                                                {
+                                                    <img src="@discussion.Author.ProfileImg" alt="Profile Image" class="author-image" />
+                                                }
+                                                else
+                                                {
+                                                    @(discussion.Author.UserName.Length > 0
+                                                        ? discussion.Author.UserName[0].ToString().ToUpper()
+                                                        : "U")
+                                                }
                                             </div>
                                             <span class="user-title">
                                                 <a asp-controller="User"
@@ -159,6 +175,9 @@
                                                     <i class="fas fa-thumbs-down"></i>
                                                 </button>
                                             </form>
+                                            <a asp-controller="Discussions" asp-action="Details" asp-route-id="@discussion.Id" class="details-btn">
+                                                Open thread
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
