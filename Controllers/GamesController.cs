@@ -11,6 +11,8 @@ using GameForum.Services.Interfaces;
 using GameForum.Models.Enums;
 using GameForum.Models.ViewModels;
 using GameForum.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace GameForum.Controllers
 {
@@ -21,13 +23,16 @@ namespace GameForum.Controllers
         private readonly IUserService _userService;
         private readonly IReviewService _reviewService;
         private readonly IDiscussionService _discussionService;
+        private readonly UserManager<User> _userManager;
 
-        public GamesController(IGameService gameService,IUserService userService,IReviewService reviewService, IDiscussionService discussionService)
+
+        public GamesController(IGameService gameService,IUserService userService,IReviewService reviewService, IDiscussionService discussionService, UserManager<User> userManager)
         {
             _gameService = gameService;
             _userService = userService;
             _reviewService = reviewService;
             _discussionService = discussionService;
+            _userManager = userManager;
         }
 
         // GET: Games
@@ -113,6 +118,20 @@ namespace GameForum.Controllers
             _gameService.AddGame(game);
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult SubmitReview(int gameId, string content, int rating)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (userId == null) return Unauthorized();
+
+            _reviewService.AddOrUpdateReview(userId, gameId, content, rating);
+            _gameService.UpdateRating(rating , gameId);
+
+            return RedirectToAction("Details", "Games", new { id = gameId });
+        }
+
 
 
         // GET: Games/Edit/5

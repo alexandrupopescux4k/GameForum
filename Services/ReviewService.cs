@@ -2,6 +2,7 @@
 using GameForum.Models;
 using GameForum.Repositories.Interfaces;
 using GameForum.Services.Interfaces;
+using GameForum.Repositories;
 
 namespace GameForum.Services
 {
@@ -50,5 +51,43 @@ namespace GameForum.Services
                  .Take(3)
                  .ToList();
         }
+
+        public Review AddOrUpdateReview(string userId, int gameId, string content, int rating)
+        {
+            var existingReview = _repo.ReviewRepository
+                .FindByCondition(r => r.AuthorId == userId && r.GameId == gameId)
+                .FirstOrDefault();
+
+            var newReview = new Review();
+
+            if (existingReview != null)
+            {
+                // Update existing review
+                existingReview.Content = content;
+                existingReview.Rating = rating;
+                existingReview.CreatedAt = DateTime.UtcNow;
+
+                _repo.ReviewRepository.Update(existingReview);
+            }
+            else
+            {
+                // Create new review
+                newReview = new Review
+                {
+                    AuthorId = userId,
+                    GameId = gameId,
+                    Content = content,
+                    Rating = rating,
+                    CreatedAt = DateTime.UtcNow,
+                    Upvotes = 0,
+                    Downvotes = 0
+                };
+
+                _repo.ReviewRepository.Create(newReview);
+            }
+            return existingReview ?? newReview;
+        }
+
+
     }
 }
