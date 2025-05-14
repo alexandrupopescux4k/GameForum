@@ -7,6 +7,7 @@
         IGameRequestRepository GameRequestRepository { get; }
         IReviewRepository ReviewRepository { get; }
         IUserRepository UserRepository { get; }
+        IVoteRepository VoteRepository { get; }
         void Save();
     }
 }

@@ -2,6 +2,7 @@
 @model GameForum.Models.Game
 @{
     ViewData["Title"] = @Model.Title;
+    
 }
 
 <head>
@@ -31,12 +32,10 @@
             <button type="button" class="favorite-btn favorite-form" onclick="openReviewModal()">
                 <i class="fas fa-pen"></i> Review Game
             </button>
-            <form method="get" asp-controller="Discussions" asp-action="Create" class="favorite-form">
-                <input type="hidden" name="gameId" value="@Model.Id" />
-                <button type="submit" class="favorite-btn">
-                    <i class="fas fa-comments"></i> Start Discussion
-                </button>
-            </form>
+            <button type="button" class="favorite-btn favorite-form" onclick="openDiscussionModal()">
+                <i class="fas fa-comments"></i> Start Discussion
+            </button>
+
         </div>
 
         <div class="game-main">
@@ -55,7 +54,9 @@
 
                 <div class="tab-content">
                     <div id="description" class="tab-pane active">
-                        <p>@Model.Description</p>
+                        <div class="game-description">
+                            <p>@Model.Description</p>
+                        </div>
                     </div>
                     <div id="reviews" class="tab-pane">
                         @if (Model.Reviews != null && Model.Reviews.Any())
@@ -67,8 +68,8 @@
                                         <div class="review-author">
                                             <div class="review-author-avatar">
                                                 @(review.Author.UserName.Length > 0
-                                                        ? review.Author.UserName[0].ToString().ToUpper()
-                                                        : "U")
+                                                            ? review.Author.UserName[0].ToString().ToUpper()
+                                                            : "U")
                                             </div>
                                             <span class="user-title">
                                                 <a asp-controller="User"
@@ -90,17 +91,23 @@
                                         @review.Content
 
                                         <div class="vote-controls">
-                                            <form method="post" action="#">
-                                                <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
+                                            <form>
+                                                <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-@review.Id', '@review.Id')">
+                                                    <i class="fas fa-thumbs-up"></i>
+                                                </button>
                                             </form>
-                                            <span class="vote-count">@review.Upvotes</span>
-                                            <form method="post" action="#">
-                                                <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
+                                            <span class="vote-count" id="vote-count-@review.Id" data-state="0">@review.VoteNumber</span>
+                                            <form>
+                                                <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-@review.Id', '@review.Id')">
+                                                    <i class="fas fa-thumbs-down"></i>
+                                                </button>
                                             </form>
                                             <a asp-controller="Replies" asp-action="ForReview" asp-route-id="@review.Id" class="details-btn mx-5">
                                                 Open thread
                                             </a>
                                         </div>
+
+
                                     </div>
                                 </div>
                             }
@@ -141,16 +148,17 @@
                                         @discussion.Content
 
                                         <div class="vote-controls">
-                                            <form method="post" action="#">
-                                                <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
+                                            <form>
+                                                <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-discussion-@discussion.Id', '@discussion.Id')">
+                                                    <i class="fas fa-thumbs-up"></i>
+                                                </button>
                                             </form>
-                                            <span class="vote-count">@discussion.Upvotes</span>
-                                            <form method="post" action="#">
-                                                <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
+                                            <span class="vote-count" id="vote-count-discussion-@discussion.Id" data-state="0">@discussion.VoteNumber</span>
+                                            <form>
+                                                <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-discussion-@discussion.Id', '@discussion.Id')">
+                                                    <i class="fas fa-thumbs-down"></i>
+                                                </button>
                                             </form>
-                                            <a asp-controller="Replies" asp-action="ForDiscussion" asp-route-id="@discussion.Id" class="details-btn">
-                                                Open thread
-                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -191,6 +199,24 @@
     </div>
 </div>
 
+<div id="discussionModal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>Start a Discussion</h2>
+        <form id="discussionForm" method="post" action="/Games/SubmitDiscussion">
+            <input type="hidden" name="GameId" value="@Model.Id" />
+            <div class="form-group">
+                <label for="DiscussionContent">Discussion Content</label>
+                <textarea name="Content" id="DiscussionContent" required rows="4" placeholder="What do you want to talk about?"></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button type="submit" class="details-btn">Start</button>
+                <button type="button" class="details-btn" onclick="closeDiscussionModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 
 
 
@@ -230,5 +256,86 @@
                 closeReviewModal();
             }
         });
+
+                function openDiscussionModal() {
+            document.getElementById("discussionModal").style.display = "flex";
+        }
+
+        function closeDiscussionModal() {
+            document.getElementById("discussionModal").style.display = "none";
+        }
+
+        window.addEventListener("click", function (event) {
+            const modal = document.getElementById("discussionModal");
+            if (event.target === modal) {
+                closeDiscussionModal();
+            }
+        });
+
+
+                function toggleUpvote(event, elementId, reviewId) {
+            event.preventDefault();
+
+            var voteElement = document.getElementById(elementId);
+            var currentUpvotes = parseInt(voteElement.innerText);
+            var state = voteElement.dataset.state || "0";
+
+            if (state === "0") {
+                voteElement.innerText = (currentUpvotes + 1).toString();
+                voteElement.dataset.state = "1";
+            } else if (state === "1") {
+                voteElement.innerText = (currentUpvotes - 1).toString();
+                voteElement.dataset.state = "0";
+            } else if (state === "-1") {
+                voteElement.innerText = (currentUpvotes + 2).toString();
+                voteElement.dataset.state = "1";
+            }
+
+            fetch('/Post/Vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    postId: parseInt(reviewId),
+                    voteType: 1 // 1 for upvote
+                })
+            });
+        }
+
+        function toggleDownvote(event, elementId, reviewId) {
+            event.preventDefault();
+
+            var voteElement = document.getElementById(elementId);
+            var currentUpvotes = parseInt(voteElement.innerText);
+            var state = voteElement.dataset.state || "0";
+
+            if (state === "0") {
+                voteElement.innerText = (currentUpvotes - 1).toString();
+                voteElement.dataset.state = "-1";
+            } else if (state === "-1") {
+                voteElement.innerText = (currentUpvotes + 1).toString();
+                voteElement.dataset.state = "0";
+            } else if (state === "1") {
+                voteElement.innerText = (currentUpvotes - 2).toString();
+                voteElement.dataset.state = "-1";
+            }
+
+            fetch('/Post/Vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    postId: parseInt(reviewId),
+                    voteType: -1 
+                })
+            });
+        }
+
+
+
+
+
     </script>
 }

@@ -47,7 +47,7 @@ namespace GameForum.Services
              .FindAll()
               .Include(r => r.Game)
                  .Include(r => r.Author)
-                 .OrderByDescending(x => x.Upvotes + x.Downvotes)
+                 .OrderByDescending(x => x.VoteNumber)
                  .Take(3)
                  .ToList();
         }
@@ -79,8 +79,7 @@ namespace GameForum.Services
                     Content = content,
                     Rating = rating,
                     CreatedAt = DateTime.UtcNow,
-                    Upvotes = 0,
-                    Downvotes = 0
+                    VoteNumber = 0
                 };
 
                 _repo.ReviewRepository.Create(newReview);

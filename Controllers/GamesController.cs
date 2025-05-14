@@ -132,6 +132,27 @@ namespace GameForum.Controllers
             return RedirectToAction("Details", "Games", new { id = gameId });
         }
 
+        [HttpPost]
+        [Authorize]
+        public IActionResult SubmitDiscussion(int gameId, string content)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (userId == null) return Unauthorized();
+
+            var discussion = new Discussion
+            {
+                GameId = gameId,
+                AuthorId = userId,
+                Content = content,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _discussionService.AddDiscussion(discussion);
+
+            return RedirectToAction("Details", "Games", new { id = gameId });
+        }
+
+
 
 
         // GET: Games/Edit/5
