@@ -91,7 +91,15 @@
                             <i class="fas fa-heart"></i> Favorite Games
                         </button>
                     </li>
+                    <li class="tab-item" role="presentation" onclick="switchTab('requests')">
+                        <button id="requests-tab" class="tab-link">
+                            <i class="fas fa-plus-circle"></i> Game Requests
+                        </button>
+                    </li>
                 </ul>
+
+
+
 
                 <div class="tab-content" id="profileTabsContent">
                     <div class="tab-pane active" id="reviews" role="tabpanel">
@@ -132,6 +140,9 @@
 
 
                     
+
+
+
                     <div class="tab-pane" id="favorites" role="tabpanel" style="display: none;">
                         @if (Model.FavoriteGames != null && Model.FavoriteGames.Any())
                         {
@@ -180,6 +191,8 @@
 
 
 
+
+
                     <div class="tab-pane" id="discussions" role="tabpanel" style="display: none;">
                         @if (Model.DiscussionPosts == null || !Model.DiscussionPosts.Any())
                         {
@@ -211,6 +224,53 @@
                             </div>
                         }
                     </div>
+
+
+
+
+
+                    <div class="tab-pane" id="requests" role="tabpanel" style="display: none;">
+                        @if (Model.GameRequests == null || !Model.GameRequests.Any())
+                        {
+                            <div class="empty-state">
+                                <i class="fas fa-gamepad empty-icon"></i>
+                                <p>No game requests yet. Submit a game you'd love to see on the platform!</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="discussions-list">
+                                @foreach (var request in Model.GameRequests)
+                                {
+                                    <div class="discussion-card">
+                                        <div class="discussion-header">
+                                            <h4 class="discussion-title">@request.Title</h4>
+                                        </div>
+                                        <div class="discussion-preview">
+                                            <p>@(request.Description?.Length > 150 ? request.Description.Substring(0, 150) + "..." : request.Description)</p>
+                                        </div>
+                                        <div class="discussion-meta">
+                                            <span class="discussion-date"><i class="far fa-calendar-alt"></i> @request.RequestedAt.ToString("MMM dd, yyyy")</span>
+                                            <span class="discussion-status"><i class="fas fa-flag"></i> @request.Status</span>
+                                            @if (request.GameCategories != null && request.GameCategories.Any())
+                                            {
+                                                <div class="category-tags">
+                                                    @foreach (var cat in request.GameCategories)
+                                                    {
+                                                        <span class="badge badge-secondary">@cat.Category</span>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+
+
+
                 </div>
             </div>
         </div>

@@ -22,6 +22,7 @@ namespace GameForum.Data
         public DbSet<GameRequest> GameRequests { get; set; }
         public DbSet<Vote> Votes { get; set; }
         public DbSet<GameGameCategory> GameGameCategories { get; set; }
+        public DbSet<GameRequestCategory> GameRequestCategories { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -80,10 +81,13 @@ namespace GameForum.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<GameRequest>()
-                .HasOne<User>()
+                .HasOne(gr => gr.RequestedByUser)
                 .WithMany(u => u.GameRequests)
                 .HasForeignKey(gr => gr.RequestedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+
 
             builder.Entity<IdentityUserToken<string>>(b =>
             {
@@ -97,6 +101,15 @@ namespace GameForum.Data
                 .HasOne(gc => gc.Game)
                 .WithMany(g => g.GameCategories)
                 .HasForeignKey(gc => gc.GameId);
+
+            builder.Entity<GameRequestCategory>()
+                .HasKey(gc => new { gc.GameRequestId, gc.Category });
+
+            builder.Entity<GameRequestCategory>()
+                .HasOne(gc => gc.GameRequest)
+                .WithMany(gr => gr.GameCategories)
+                .HasForeignKey(gc => gc.GameRequestId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

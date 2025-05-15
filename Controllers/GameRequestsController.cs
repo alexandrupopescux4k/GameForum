@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using GameForum.Data;
 using GameForum.Models;
 using GameForum.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using GameForum.Models.Enums;
+using GameForum.Models.ViewModels;
 
 namespace GameForum.Controllers
 {
@@ -15,11 +18,13 @@ namespace GameForum.Controllers
     {
         private readonly GameForumContext _context;
         private readonly IGameRequestService _gameRequestService;
+        private readonly UserManager<User> _userManager;
 
-        public GameRequestsController(GameForumContext context,IGameRequestService gameRequestService)
+        public GameRequestsController(GameForumContext context,IGameRequestService gameRequestService, UserManager<User> userManager)
         {
             _context = context;
             _gameRequestService = gameRequestService;
+            _userManager = userManager;
         }
 
         // GET: GameRequests
@@ -50,7 +55,18 @@ namespace GameForum.Controllers
         // GET: GameRequests/Create
         public IActionResult Create()
         {
-            return View();
+            var model = new GameRequestViewModel
+            {
+                AvailableCategories = Enum.GetValues(typeof(GameCategory))
+                     .Cast<GameCategory>()
+                    .Select(c => new SelectListItem
+                         {
+                          Text = c.ToString(),
+                            Value = c.ToString()
+                         }).ToList()
+            };
+
+            return View(model);
         }
 
         // POST: GameRequests/Create
@@ -58,15 +74,39 @@ namespace GameForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,ImageUrl,RequestedByUserId,Status,RequestedAt")] GameRequest gameRequest)
+        public async Task<IActionResult> Create(GameRequestViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(gameRequest);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                model.AvailableCategories = Enum.GetValues(typeof(GameCategory))
+                    .Cast<GameCategory>()
+                    .Select(c => new SelectListItem
+                    {
+                        Text = c.ToString(),
+                        Value = c.ToString()
+                    }).ToList();
+                return View(model);
             }
-            return View(gameRequest);
+
+            var userId = _userManager.GetUserId(User);
+            var request = new GameRequest
+            {
+                Title = model.Title,
+                Description = model.Description,
+                ImageUrl = model.ImageUrl,
+                RequestedByUserId = userId,
+                Status = RequestStatus.Pending,
+                RequestedAt = DateTime.UtcNow,
+                GameCategories = model.SelectedCategories.Select(cat => new GameRequestCategory
+                {
+                    Category = cat
+                }).ToList()
+            };
+
+            _gameRequestService.AddGame(request);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: GameRequests/Edit/5
