@@ -22,10 +22,12 @@ namespace GameForum.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<User> _userManager;
 
-        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<User> signInManager, UserManager<User> userManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -110,9 +112,20 @@ namespace GameForum.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return Page();
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(
+                    user.NormalizedUserName,
+                    Input.Password,
+                    Input.RememberMe,
+                    lockoutOnFailure: false
+                );
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -133,6 +146,8 @@ namespace GameForum.Areas.Identity.Pages.Account
                     return Page();
                 }
             }
+
+
 
             // If we got this far, something failed, redisplay form
             return Page();
