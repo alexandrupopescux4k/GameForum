@@ -6,6 +6,6 @@ namespace GameForum.Services.Interfaces
     {
 
         void AddReply(Reply reply);
-
+        void LoadRepliesRecursively(Reply reply);
     }
 }
