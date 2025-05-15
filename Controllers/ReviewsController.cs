@@ -53,7 +53,7 @@ namespace GameForum.Controllers
             };
 
             _replyService.AddReply(reply);
-            return RedirectToAction("Details", new { id = ReviewId });
+            return RedirectToAction("Details", new { id = RootId });
         }
     }
 }
