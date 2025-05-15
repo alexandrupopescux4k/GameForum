@@ -35,7 +35,7 @@ namespace GameForum.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult AddReply(int ReviewId, string Content, int? ParentReplyId)
+        public IActionResult AddReply(int ReviewId, string Content, int? ParentReplyId, int RootId)
         {
             var userId = _userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId) || string.IsNullOrWhiteSpace(Content))
@@ -49,6 +49,7 @@ namespace GameForum.Controllers
                 ParentPostId = ParentReplyId ?? ReviewId,
                 GameId = null, 
                 VoteNumber = 0,
+                RootId = RootId
             };
 
             _replyService.AddReply(reply);

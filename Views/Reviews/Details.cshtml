@@ -6,7 +6,73 @@
     <link rel="stylesheet" href="~/css/game_details.css" />
     <link rel="stylesheet" href="~/css/review_thread.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+        /* Additional styles for nested replies */
+        .nested-replies {
+            margin-left: 40px;
+            margin-top: 10px;
+            width: calc(100% - 40px);
+            display: none;
+        }
+
+        .nested-reply-item {
+            padding-left: 10px;
+            border-left: 2px solid #e0e0e0;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+            .nested-reply-item .review-author-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9em;
+            }
+
+        .show-replies-button {
+            background: none;
+            border: none;
+            color: #4a6fa5;
+            font-size: 0.85em;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .show-replies-button:hover {
+                text-decoration: underline;
+            }
+
+        .nested-reply-form {
+            margin-left: 40px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Style for deeper level nesting */
+        .nested-replies .nested-replies {
+            margin-left: 30px;
+            font-size: 0.95em;
+        }
+
+            .nested-replies .nested-replies .nested-reply-item {
+                font-size: 0.95em;
+            }
+
+            .nested-replies .nested-replies .review-author-avatar {
+                width: 28px;
+                height: 28px;
+            }
+
+            /* Add a slight decrease in size for each nesting level */
+            .nested-replies .nested-replies .nested-replies {
+                margin-left: 25px;
+                font-size: 0.9em;
+            }
+    </style>
 </head>
+
 <div class="review-thread-container">
     <h1 class="review-thread-title">
         <i class="fas fa-comment-dots"></i> Review Thread
@@ -30,9 +96,9 @@
             <div class="review-body-container">
                 <div class="main-review-meta">
                     <div class="user-title">
-                    <a asp-controller="User" asp-action="PublicProfile" asp-route-userId="@Model.AuthorId">
-                        @Model.Author?.UserName
-                    </a>
+                        <a asp-controller="User" asp-action="PublicProfile" asp-route-userId="@Model.AuthorId">
+                            @Model.Author?.UserName
+                        </a>
                     </div>
                     <div class="main-rating-badge">
                         <i class="fas fa-star"></i> @Model.Rating/10
@@ -44,7 +110,6 @@
 
                 <div class="main-review-content">
                     <h2>@Model.Content</h2>
-
                 </div>
 
                 <div class="review-interactions">
@@ -53,7 +118,7 @@
                         <span class="vote-count">@Model.VoteNumber</span>
                         <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
                     </div>
-                    <button class="reply-button" onclick="openReplyForm()">
+                    <button class="reply-button" onclick="openReplyForm('main')">
                         <i class="fas fa-reply"></i> Reply
                     </button>
                 </div>
@@ -62,9 +127,11 @@
     </div>
 
     <!-- Reply Form (Hidden by default) -->
-    <div id="replyForm" class="reply-form" style="display: none;">
+    <div id="replyForm-main" class="reply-form" style="display: none;">
         <form method="post" asp-controller="Reviews" asp-action="AddReply">
             <input type="hidden" name="ReviewId" value="@Model.Id" />
+            <input type="hidden" name="RootId" value="@Model.Id" />
+
             <div class="form-group">
                 <label for="Content">Your Reply</label>
                 <textarea name="Content" id="Content" required rows="4" placeholder="Share your thoughts..."></textarea>
@@ -73,7 +140,7 @@
                 <button type="submit" class="reply-button">
                     <i class="fas fa-paper-plane"></i> Submit
                 </button>
-                <button type="button" class="cancel-button" onclick="closeReplyForm()">
+                <button type="button" class="cancel-button" onclick="closeReplyForm('main')">
                     <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
@@ -91,7 +158,7 @@
         {
             foreach (var reply in Model.Replies.OrderBy(r => r.CreatedAt))
             {
-                <div class="reply-item">
+                <div class="reply-item" id="reply-@reply.Id">
                     <div class="review-author-wrapper">
                         <div class="review-author-avatar">
                             @if (!string.IsNullOrEmpty(reply.Author?.ProfileImg))
@@ -121,18 +188,53 @@
                         </div>
                         <div class="review-interactions">
                             <div class="vote-controls">
-                                <form method="post" action="#">
-                                    <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
-                                </form>
+                                <button type="submit" class="vote-btn upvote"><i class="fas fa-thumbs-up"></i></button>
                                 <span class="vote-count">@reply.VoteNumber</span>
-                                <form method="post" action="#">
-                                    <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
-                                </form>
+                                <button type="submit" class="vote-btn downvote"><i class="fas fa-thumbs-down"></i></button>
                             </div>
                             <button class="reply-button" onclick="openReplyForm('@reply.Id')">
                                 <i class="fas fa-reply"></i> Reply
                             </button>
+                            @if (reply.Replies != null && reply.Replies.Any())
+                            {
+                                <button class="show-replies-button fw-bold" onclick="toggleNestedReplies('@reply.Id')">
+                                    <i class="fas fa-comments"></i> View Replies (<span class="replies-count">@reply.Replies.Count</span>)
+                                </button>
+                            }
                         </div>
+
+                        <!-- Nested reply form -->
+                        <div id="replyForm-@reply.Id" class="nested-reply-form">
+                            <form method="post" asp-controller="Reviews" asp-action="AddReply">
+                                <input type="hidden" name="ReviewId" value="@Model.Id" />
+                                <input type="hidden" name="ParentReplyId" value="@reply.Id" />
+                                <input type="hidden" name="RootId" value="@Model.Id" />
+
+                                <div class="form-group">
+                                    <label for="Content-@reply.Id">Your Reply</label>
+                                    <textarea name="Content" id="Content-@reply.Id" required rows="3" placeholder="Share your thoughts..."></textarea>
+                                </div>
+                                <div class="form-buttons">
+                                    <button type="submit" class="reply-button">
+                                        <i class="fas fa-paper-plane"></i> Submit
+                                    </button>
+                                    <button type="button" class="cancel-button" onclick="closeReplyForm('@reply.Id')">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Nested replies container -->
+                        @if (reply.Replies != null && reply.Replies.Any())
+                        {
+                            <div id="nested-replies-@reply.Id" class="nested-replies">
+                                @foreach (var nestedReply in reply.Replies.OrderBy(r => r.CreatedAt))
+                                {
+                                    @await Html.PartialAsync("_NestedReplyPartial", nestedReply)
+                                }
+                            </div>
+                        }
                     </div>
                 </div>
             }
@@ -146,31 +248,53 @@
         }
     </div>
 </div>
+
 @section Scripts {
     <script>
-        function openReplyForm(replyToId = null) {
-        const replyForm = document.getElementById('replyForm');
-        replyForm.style.display = 'block';
-                // Smooth scroll to the form
-                replyForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        function openReplyForm(replyId) {
+            const replyFormId = `replyForm-${replyId}`;
+            const replyForm = document.getElementById(replyFormId);
 
-                // If replying to a specific comment, you can set a hidden field
-                if (replyToId) {
-                    // Optional: You could add a hidden field to track which reply this is responding to
-                    const hiddenField = document.createElement('input');
-                    hiddenField.type = 'hidden';
-                    hiddenField.name = 'ParentReplyId';
-                    hiddenField.value = replyToId;
-                    replyForm.querySelector('form').appendChild(hiddenField);
+            // Hide any other open reply forms first
+            document.querySelectorAll('.reply-form, .nested-reply-form').forEach(form => {
+                if (form.id !== replyFormId) {
+                    form.style.display = 'none';
+                }
+            });
+
+            // Show this reply form
+            replyForm.style.display = 'block';
+            replyForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function closeReplyForm(replyId) {
+            const replyFormId = `replyForm-${replyId}`;
+            document.getElementById(replyFormId).style.display = 'none';
+        }
+
+        function toggleNestedReplies(replyId) {
+            const nestedRepliesContainer = document.getElementById(`nested-replies-${replyId}`);
+            const displayStyle = nestedRepliesContainer.style.display;
+
+            if (displayStyle === 'none' || displayStyle === '') {
+                nestedRepliesContainer.style.display = 'block';
+
+                // Update button text to indicate replies can be hidden
+                const button = document.querySelector(`button[onclick="toggleNestedReplies('${replyId}')"]`);
+                if (button) {
+                    button.innerHTML = '<i class="fas fa-comments"></i> Hide Replies (<span class="replies-count">' +
+                        button.querySelector('.replies-count').textContent + '</span>)';
+                }
+            } else {
+                nestedRepliesContainer.style.display = 'none';
+
+                // Update button text to indicate replies can be shown
+                const button = document.querySelector(`button[onclick="toggleNestedReplies('${replyId}')"]`);
+                if (button) {
+                    button.innerHTML = '<i class="fas fa-comments"></i> View Replies (<span class="replies-count">' +
+                        button.querySelector('.replies-count').textContent + '</span>)';
                 }
             }
-
-            function closeReplyForm() {
-                document.getElementById('replyForm').style.display = 'none';
-
-                // Remove any ParentReplyId fields that might have been added
-                const parentFields = document.querySelectorAll('input[name="ParentReplyId"]');
-                parentFields.forEach(field => field.remove());
-            }
+        }
     </script>
 }

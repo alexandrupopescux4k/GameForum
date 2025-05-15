@@ -9,10 +9,12 @@ namespace GameForum.Services
     public class ReviewService : IReviewService
     {
         private readonly IRepositoryWrapper _repo;
+        private readonly IReplyService _replyService;
         
-        public ReviewService(IRepositoryWrapper repository)
+        public ReviewService(IRepositoryWrapper repository, IReplyService replyService)
         {
             _repo = repository;
+            _replyService = replyService;
         }
 
         public void AddReview(Review review)
@@ -25,12 +27,22 @@ namespace GameForum.Services
 
         public Review GetById(int id)
         {
-            return _repo.ReviewRepository
+            var review = _repo.ReviewRepository
               .FindByCondition(r => r.Id == id)
              .Include(r => r.Author)
              .Include(r => r.Replies)
                  .ThenInclude(reply => reply.Author)
              .FirstOrDefault();
+
+            if (review != null)
+            {
+                foreach (var reply in review.Replies)
+                {
+                    _replyService.LoadRepliesRecursively(reply);
+                }
+            }
+
+            return review;
         }
 
         public IEnumerable<Review> GetReviewsByGameId(int gameId)
