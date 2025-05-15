@@ -7,5 +7,8 @@ namespace GameForum.Services.Interfaces
     {
         void AddGame(GameRequest gameRequest);
         IEnumerable<GameRequest> GetAll();
+        GameRequest GetById(int id);
+        void Update(GameRequest request);
+        IEnumerable<GameRequest> GetAllPendingRequests();
     }
 }

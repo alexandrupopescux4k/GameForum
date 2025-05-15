@@ -78,13 +78,17 @@ namespace GameForum.Services
                 {
                     _repo.DiscussionRepository.Update(discussion);
                 }
-                //else if (post is Reply reply)
-                //{
-                //    _repo.ReplyRepository.Update(reply);
-                //}
+                else if(post is Reply reply)
+                {
+                    _repo.ReplyRepository.Update(reply);
+                }
+                    //else if (post is Reply reply)
+                    //{
+                    //    _repo.ReplyRepository.Update(reply);
+                    //}
 
-                // Save all changes
-                _repo.Save();
+                    // Save all changes
+                    _repo.Save();
 
                 return true;
             }
@@ -111,6 +115,12 @@ namespace GameForum.Services
             if (review != null)
             {
                 return review;
+            }
+
+            var reply = _repo.ReplyRepository.FindByCondition(rp => rp.Id == postId).FirstOrDefault();
+            if (reply != null)
+            {
+                return reply;
             }
 
             return null; // Return null if no post is found in either
