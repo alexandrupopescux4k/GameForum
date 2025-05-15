@@ -8,10 +8,17 @@ using System.Security.Claims;
 public class UserController : Controller
 {
     private readonly IUserService _userService;
+    private readonly IFavoriteGameService _favoriteService;
+    private readonly IReviewService _reviewService;
+    private readonly IDiscussionService _discussionService;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IFavoriteGameService favoriteService,
+                          IReviewService reviewService, IDiscussionService discussionService)
     {
         _userService = userService;
+        _favoriteService = favoriteService;
+        _reviewService = reviewService;
+        _discussionService = discussionService;
     }
 
     [Authorize]
@@ -19,7 +26,10 @@ public class UserController : Controller
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await _userService.GetUserByIdAsync(userId);
+
         ViewData["IsPublicProfile"] = false;
+
+
         return View(user);
     }
 

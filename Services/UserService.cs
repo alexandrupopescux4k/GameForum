@@ -2,6 +2,7 @@
 using GameForum.Repositories.Interfaces;
 using GameForum.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameForum.Services
 {
@@ -18,7 +19,15 @@ namespace GameForum.Services
 
         public async Task<User> GetUserByIdAsync(string id)
         {
-            return _repo.UserRepository.FindByCondition(u => u.Id == id).FirstOrDefault();
+            return await _repo.UserRepository
+                .FindByCondition(u => u.Id == id)
+                .Include(u => u.FavoriteGames)
+                    .ThenInclude(fg => fg.Game) 
+                .Include(u => u.Reviews)
+                .ThenInclude(fg => fg.Game)
+                .Include(u => u.DiscussionPosts)
+                .ThenInclude(fg => fg.Game)
+                .FirstOrDefaultAsync();
         }
 
         public async Task UpdateProfileAsync(string id, string newUsername, string aboutMe, string newImg)

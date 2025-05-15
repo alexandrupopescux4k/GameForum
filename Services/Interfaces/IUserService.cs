@@ -6,6 +6,7 @@ namespace GameForum.Services.Interfaces
     {
         Task<User> GetUserByIdAsync(string id);
         Task UpdateProfileAsync(string id, string newUsername, string aboutMe, string newImg);
+
     }
 
 }
