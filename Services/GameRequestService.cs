@@ -2,6 +2,7 @@
 using GameForum.Repositories.Interfaces;
 using GameForum.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Core.Types;
 
 namespace GameForum.Services
 {
@@ -24,5 +25,23 @@ namespace GameForum.Services
                 .Include(r => r.GameCategories)
                  .ToList();
         }
+
+        public IEnumerable<GameRequest> GetAllPendingRequests()
+        {
+            return _repo.GameRequestRepository.GetPendingRequests();
+        }
+
+        public GameRequest GetById(int id)
+        {
+            return _repo.GameRequestRepository.GetById(id);
+        }
+
+        public void Update(GameRequest request)
+        {
+            _repo.GameRequestRepository.UpdateRequest(request);
+        }
+
+
+
     }
 }

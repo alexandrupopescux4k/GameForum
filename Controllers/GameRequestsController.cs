@@ -11,6 +11,8 @@ using GameForum.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using GameForum.Models.Enums;
 using GameForum.Models.ViewModels;
+using GameForum.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameForum.Controllers
 {
@@ -18,19 +20,21 @@ namespace GameForum.Controllers
     {
         private readonly GameForumContext _context;
         private readonly IGameRequestService _gameRequestService;
+        private readonly IGameService _gameService;
         private readonly UserManager<User> _userManager;
 
-        public GameRequestsController(GameForumContext context,IGameRequestService gameRequestService, UserManager<User> userManager)
+        public GameRequestsController(GameForumContext context,IGameRequestService gameRequestService, UserManager<User> userManager, IGameService gameService)
         {
             _context = context;
             _gameRequestService = gameRequestService;
             _userManager = userManager;
+            _gameService = gameService;
         }
 
         // GET: GameRequests
         public async Task<IActionResult> Index()
         {
-            var requests = _gameRequestService.GetAll();
+            var requests = _gameRequestService.GetAllPendingRequests();
             return View(requests);
         }
 
@@ -196,6 +200,45 @@ namespace GameForum.Controllers
         private bool GameRequestExists(int id)
         {
             return _context.GameRequests.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult HandleRequest(int id, string actionType)
+        {
+            var request = _gameRequestService.GetById(id);
+            if (request == null || request.Status != RequestStatus.Pending)
+            {
+                return NotFound();
+            }
+
+            if (actionType == "accept")
+            {
+                // Create new Game
+                var newGame = new Game
+                {
+                    Title = request.Title,
+                    Description = request.Description,
+                    ImageUrl = request.ImageUrl,
+                    GameCategories = request.GameCategories.Select(gc => new GameGameCategory
+                    {
+                        Category = gc.Category
+                    }).ToList()
+                };
+
+                _gameService.AddGame(newGame);
+
+                // Update request status
+                request.Status = RequestStatus.Approved;
+                _gameRequestService.Update(request);
+            }
+            else if (actionType == "reject")
+            {
+                request.Status = RequestStatus.Rejected;
+                _gameRequestService.Update(request);
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
