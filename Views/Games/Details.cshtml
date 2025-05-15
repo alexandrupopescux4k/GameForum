@@ -23,12 +23,25 @@
             <div class="game-rating fw-bold">
                 <i class="fas fa-star "></i> @Model.AverageRating.ToString("0.0")
             </div>
-            <form method="post" asp-action="AddToFavorites" asp-controller="Games" class="favorite-form">
+            <form method="post" asp-action="AddFavoriteGame" asp-controller="Games" class="favorite-form">
                 <input type="hidden" name="gameId" value="@Model.Id" />
+
+                @{
+                    bool isFavorited = (bool)(ViewData["IsFavorited"] ?? false);
+                }
+
                 <button type="submit" class="favorite-btn">
-                    <i class="fas fa-heart"></i> Add to Favorites
+                    @if (isFavorited)
+                    {
+                        <text><i class="fas fa-heart-broken"></i> Remove from Favorites</text>
+                    }
+                    else
+                    {
+                        <text><i class="fas fa-heart"></i> Add to Favorites</text>
+                    }
                 </button>
             </form>
+
             <button type="button" class="favorite-btn favorite-form" onclick="openReviewModal()">
                 <i class="fas fa-pen"></i> Review Game
             </button>

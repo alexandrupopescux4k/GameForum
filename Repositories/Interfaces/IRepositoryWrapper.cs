@@ -9,6 +9,7 @@
         IUserRepository UserRepository { get; }
         IReplyRepository ReplyRepository { get; }
         IVoteRepository VoteRepository { get; }
+        IFavoriteGameRepository FavoriteGameRepository { get; }
         void Save();
     }
 }

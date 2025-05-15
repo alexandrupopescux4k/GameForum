@@ -23,16 +23,20 @@ namespace GameForum.Controllers
         private readonly IUserService _userService;
         private readonly IReviewService _reviewService;
         private readonly IDiscussionService _discussionService;
+        private readonly IFavoriteGameService _favoriteGameService;
         private readonly UserManager<User> _userManager;
 
 
-        public GamesController(IGameService gameService,IUserService userService,IReviewService reviewService, IDiscussionService discussionService, UserManager<User> userManager)
+        public GamesController(IGameService gameService,IUserService userService,
+                               IReviewService reviewService,IDiscussionService discussionService,
+                               IFavoriteGameService favoriteGameService,UserManager<User> userManager)
         {
             _gameService = gameService;
             _userService = userService;
             _reviewService = reviewService;
             _discussionService = discussionService;
             _userManager = userManager;
+            _favoriteGameService = favoriteGameService;
         }
 
         // GET: Games
@@ -61,14 +65,8 @@ namespace GameForum.Controllers
             if (game == null)
                 return NotFound();
 
-           
-
-            //var viewModel = new GameViewModel
-            //{
-            //    Game = game,
-            //    GameReviews = _reviewService.GetReviewsByGameId(game.Id),
-            //    GetDiscussions = _discussionService.GetDiscussionByGameId(game.Id)
-            //};
+            var userId = _userManager.GetUserId(User);
+            ViewData["IsFavorited"] = userId != null && _favoriteGameService.IsFavorited(userId, game.Id);
 
             return View(game);
         }
@@ -117,6 +115,26 @@ namespace GameForum.Controllers
 
             _gameService.AddGame(game);
             return RedirectToAction("Index");
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult AddFavoriteGame(int gameId)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (userId == null) return Unauthorized();
+
+            if (_favoriteGameService.IsFavorited(userId, gameId))
+            {
+                _favoriteGameService.RemoveFavoriteGame(userId, gameId);
+            }
+            else
+            {
+                _favoriteGameService.AddFavoriteGame(userId, gameId);
+            }
+
+            return RedirectToAction("Details", new { id = gameId });
         }
 
         [HttpPost]

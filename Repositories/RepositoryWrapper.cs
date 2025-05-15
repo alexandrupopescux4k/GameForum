@@ -119,6 +119,21 @@ namespace GameForum.Repositories
             }
         }
 
+        private IFavoriteGameRepository? _FavoriteGameRepository;
+
+        public IFavoriteGameRepository FavoriteGameRepository
+        {
+            get
+            {
+                if (_FavoriteGameRepository == null)
+                {
+                    _FavoriteGameRepository = new FavoriteGameRepository(_gameforumContext);
+                }
+
+                return _FavoriteGameRepository;
+            }
+        }
+
 
         public RepositoryWrapper(GameForumContext gameforumContext)
         {
