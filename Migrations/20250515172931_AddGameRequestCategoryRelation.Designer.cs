@@ -4,6 +4,7 @@ using GameForum.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameForum.Migrations
 {
     [DbContext(typeof(GameForumContext))]
-    partial class GameForumContextModelSnapshot : ModelSnapshot
+    [Migration("20250515172931_AddGameRequestCategoryRelation")]
+    partial class AddGameRequestCategoryRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,9 +111,14 @@ namespace GameForum.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RequestedByUserId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("GameRequests");
                 });
@@ -481,10 +489,14 @@ namespace GameForum.Migrations
             modelBuilder.Entity("GameForum.Models.GameRequest", b =>
                 {
                     b.HasOne("GameForum.Models.User", "RequestedByUser")
-                        .WithMany("GameRequests")
+                        .WithMany()
                         .HasForeignKey("RequestedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("GameForum.Models.User", null)
+                        .WithMany("GameRequests")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("RequestedByUser");
                 });

@@ -27,6 +27,8 @@ namespace GameForum.Services
                 .ThenInclude(fg => fg.Game)
                 .Include(u => u.DiscussionPosts)
                 .ThenInclude(fg => fg.Game)
+                .Include(u=>u.GameRequests)
+                .ThenInclude(gr => gr.GameCategories)
                 .FirstOrDefaultAsync();
         }
 
