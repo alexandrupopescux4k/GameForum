@@ -32,6 +32,7 @@ namespace GameForum.Controllers
         }
 
         // GET: GameRequests
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var requests = _gameRequestService.GetAllPendingRequests();
