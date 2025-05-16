@@ -302,3 +302,66 @@
 .main-rating-badge i.fa-star {
     color: gold; /* Changed from white to gold */
 }
+
+.nested-replies {
+    margin-left: 40px;
+    margin-top: 10px;
+    width: calc(100% - 40px);
+    display: none;
+}
+
+.nested-reply-item {
+    padding-left: 10px;
+    border-left: 2px solid #e0e0e0;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+}
+
+    .nested-reply-item .review-author-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9em;
+    }
+
+.show-replies-button {
+    background: none;
+    border: none;
+    color: #4a6fa5;
+    font-size: 0.85em;
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+    .show-replies-button:hover {
+        text-decoration: underline;
+    }
+
+.nested-reply-form {
+    margin-left: 40px;
+    margin-top: 10px;
+    display: none;
+}
+
+/* Style for deeper level nesting */
+.nested-replies .nested-replies {
+    margin-left: 30px;
+    font-size: 0.95em;
+}
+
+    .nested-replies .nested-replies .nested-reply-item {
+        font-size: 0.95em;
+    }
+
+    .nested-replies .nested-replies .review-author-avatar {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* Add a slight decrease in size for each nesting level */
+    .nested-replies .nested-replies .nested-replies {
+        margin-left: 25px;
+        font-size: 0.9em;
+    }
