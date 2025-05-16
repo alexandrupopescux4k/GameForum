@@ -377,7 +377,7 @@
     justify-content: flex-end;
     font-size: 0.8rem;
     color: #adb5bd;
-    margin-top: 0.8rem;
+    margin-top: 0;
 }
 
 /* Games Grid (copied from explore.css with some modifications) */
@@ -411,7 +411,7 @@
 
 .game-image-container {
     position: relative;
-    height: 220px;
+    height: 300px;
     overflow: hidden;
 }
 
@@ -425,7 +425,21 @@
 .game-card:hover .game-image {
     transform: scale(1.1);
 }
+.game-title-display {
+    color: #BF40BF;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0 0.5rem;
+    transition: var(--transition);
+    display: inline-block;
+    text-decoration:none;
+}
 
+    .game-title-display:hover {
+        color: #800080;
+        transform: scale(1.02);
+    }
 .game-overlay {
     position: absolute;
     top: 0;
@@ -607,4 +621,256 @@
         border: 1px solid var(--primary-color);
         background-color: rgba(157, 78, 221, 0.1);
     }
+}
+/* Request Status Styling */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    gap: 6px;
+}
+
+.status-circle {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* Status Colors */
+.status-pending {
+    background-color: rgba(255, 183, 3, 0.15);
+    color: #d49e00;
+}
+
+    .status-pending .status-circle {
+        background-color: var(--warning-color);
+    }
+
+.status-approved {
+    background-color: rgba(6, 214, 160, 0.15);
+    color: #05b184;
+}
+
+    .status-approved .status-circle {
+        background-color: var(--success-color);
+    }
+
+.status-rejected {
+    background-color: rgba(239, 71, 111, 0.15);
+    color: #d73963;
+}
+
+    .status-rejected .status-circle {
+        background-color: var(--danger-color);
+    }
+
+/* Request card styling improvements */
+.discussion-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 1.2rem;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1rem;
+    transition: var(--transition);
+}
+
+    .discussion-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+.discussion-header {
+    margin-bottom: 0.8rem;
+}
+
+.discussion-title {
+    color: var(--dark-color);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.discussion-preview {
+    color: #495057;
+    margin-bottom: 1rem;
+}
+
+.discussion-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.discussion-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.badge-secondary {
+    background-color: #dee2e6;
+    color: #212529;
+}
+
+/* Make sure the discussion meta items align properly on mobile */
+@media (max-width: 576px) {
+    .discussion-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .discussion-status {
+        margin-left: 0 !important;
+    }
+
+    .category-tags {
+        width: 100%;
+    }
+}
+
+.discussion-layout {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.discussion-thumbnail {
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    flex-shrink: 0;
+}
+
+.discussion-content {
+    flex: 1;
+}
+/* Request container improvements */
+.discussion-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+/* Make the game request title use the same styling as game-title-display */
+.discussion-card .discussion-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0 0.5rem;
+    transition: var(--transition);
+    display: inline-block;
+    text-decoration: none;
+    color: #BF40BF;
+}
+
+    .discussion-card .discussion-title:hover {
+        color: #800080;
+        transform: scale(1.02);
+    }
+
+/* Display thumbnail properly */
+.discussion-thumbnail {
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    flex-shrink: 0;
+}
+
+/* Content container for everything except the image */
+.discussion-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Position and style the description */
+.discussion-preview {
+    color: #495057;
+    margin-bottom: 0.5rem;
+    padding: 0 0.5rem;
+}
+
+/* Make the categories display horizontally under description */
+.category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.5rem 0.5rem 1rem 0.5rem;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #e9ecef;
+    color: #495057;
+    transition: var(--transition);
+}
+
+    .badge:hover {
+        background-color: #BF40BF;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+.badge-secondary {
+    background-color: rgba(123, 44, 191, 0.15);
+    color: var(--primary-color);
+}
+
+/* Improve status indicator positioning */
+.discussion-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem;
+}
+
+/* Make sure the discussion meta items align properly on mobile */
+@media (max-width: 768px) {
+    .discussion-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    /* Stack elements vertically on mobile */
+    .discussion-layout {
+        flex-direction: column;
+    }
+
+    .discussion-thumbnail {
+        width: 100%;
+        height: 120px;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.review-rating i {
+    color: var(--warning-color) !important;
+    ;
 }

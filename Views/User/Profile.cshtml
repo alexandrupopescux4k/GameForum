@@ -6,7 +6,7 @@
 
 <head>
     <link rel="stylesheet" href="~/css/profile.css">
-    <link rel="stylesheet" href="~/css/tabs.css">
+    <link rel="stylesheet" href="~/css/game_details.css">
 </head>
 
 <div class="profile-container">
@@ -102,41 +102,54 @@
 
 
                 <div class="tab-content" id="profileTabsContent">
-                    <div class="tab-pane active" id="reviews" role="tabpanel">
-                        @if (Model.Reviews == null || !Model.Reviews.Any())
+                    <div id="reviews" class="tab-pane active">
+                        @if (Model.Reviews != null && Model.Reviews.Any())
                         {
-                            <div class="empty-state">
-                                <i class="fas fa-comment-slash empty-icon"></i>
-                                <p>No reviews yet. Share your thoughts on games you've played!</p>
-                            </div>
+                            @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                            {
+                                <div class="review-item">
+                                    <div class="review-meta">
+                                        <span class="review-rating">
+                                            <i class="fas fa-star "></i> @review.Rating/10
+                                        </span>
+                                        <span >
+                                            <a asp-controller="Games" asp-action="Details" asp-route-id="@review.Game.Id" class="game-title-display">
+                                            @review.Game.Title
+                                        </a>
+                                        </span>
+                                        <span class="review-date">@review.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="review-content">
+                                        @review.Content
+                                        <div class="vote-controls">
+                                            <form>
+                                                <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-@review.Id', '@review.Id')">
+                                                    <i class="fas fa-thumbs-up"></i>
+                                                </button>
+                                            </form>
+                                            <span class="vote-count" id="vote-count-@review.Id" data-state="0">@review.VoteNumber</span>
+                                            <form>
+                                                <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-@review.Id', '@review.Id')">
+                                                    <i class="fas fa-thumbs-down"></i>
+                                                </button>
+                                            </form>
+                                            <a asp-controller="Reviews" asp-action="Details" asp-route-id="@review.Id" class="details-btn mx-5">
+                                                Open thread
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         }
                         else
                         {
-                            <div class="reviews-grid">
-                                @foreach (var review in Model.Reviews)
-                                {
-                                    <div class="review-card">
-                                        <div class="review-header">
-                                            <h4 class="game-name">@review.Game.Title</h4>
-                                            <div class="review-rating">
-                                                @for (int i = 1; i <= 5; i++)
-                                                {
-                                                    <i class="fas fa-star @(i <= review.Rating ? "rated" : "")"></i>
-                                                }
-                                            </div>
-                                        </div>
-                                        <div class="review-content">
-                                            <p>@review.Content</p>
-                                        </div>
-                                        <div class="review-meta">
-                                            <span class="review-date">@review.CreatedAt.ToString("MMM dd, yyyy")</span>
-                                        </div>
-                                    </div>
-                                }
+                            <div class="no-reviews">
+                                <i class="fas fa-comment-slash"></i>
+                                <p>No reviews yet for this game. Be the first to share your thoughts!</p>
                             </div>
                         }
                     </div>
-
+                
 
 
                     
@@ -165,12 +178,7 @@
                                                 </div>
                                             </div>
                                             <div class="game-info">
-                                                <h3 class="game-title">@game?.Title</h3>
-                                                <div class="game-meta">
-                                                    <span class="review-count">
-                                                        <i class="fas fa-comment"></i> @(game?.Reviews?.Count() ?? 0) reviews
-                                                    </span>
-                                                </div>
+                                                <span class="game-title fs-5">@game?.Title</span>
                                             </div>
                                         </div>
                                     </div>
@@ -193,34 +201,67 @@
 
 
 
-                    <div class="tab-pane" id="discussions" role="tabpanel" style="display: none;">
-                        @if (Model.DiscussionPosts == null || !Model.DiscussionPosts.Any())
+                    <div id="discussions" class="tab-pane">
+                        @if (Model.DiscussionPosts != null && Model.DiscussionPosts.Any())
                         {
-                            <div class="empty-state">
-                                <i class="fas fa-comments-slash empty-icon"></i>
-                                <p>No discussions yet. Start or join a conversation about your favorite games!</p>
-                            </div>
+                            foreach (var discussion in Model.DiscussionPosts.OrderByDescending(d => d.CreatedAt))
+                            {
+                                <div class="review-item">
+                                    <div class="review-meta">
+                                        <div class="review-author">
+                                            <div class="review-author-avatar">
+                                                @if (!string.IsNullOrEmpty(discussion.Author.ProfileImg))
+                                                {
+                                                    <img src="@discussion.Author.ProfileImg" alt="Profile Image" class="author-image" />
+                                                }
+                                                else
+                                                {
+                                                    @(discussion.Author.UserName.Length > 0
+                                                        ? discussion.Author.UserName[0].ToString().ToUpper()
+                                                        : "U")
+                                                }
+                                            </div>
+                                            <span class="user-title">
+                                                <a asp-controller="User"
+                                                   asp-action="PublicProfile"
+                                                   asp-route-userId="@discussion.AuthorId">
+                                                    @discussion.Author?.UserName
+                                                </a>
+                                            </span>
+                                        </div>
+
+                                        <div class="review-info">
+                                            <span class="review-date">@discussion.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                    </div>
+                                    <div class="review-content">
+                                        @discussion.Content
+
+                                        <div class="vote-controls">
+                                            <form>
+                                                <button type="button" class="vote-btn upvote" onclick="toggleUpvote(event, 'vote-count-discussion-@discussion.Id', '@discussion.Id')">
+                                                    <i class="fas fa-thumbs-up"></i>
+                                                </button>
+                                            </form>
+                                            <span class="vote-count" id="vote-count-discussion-@discussion.Id" data-state="0">@discussion.VoteNumber</span>
+                                            <form>
+                                                <button type="button" class="vote-btn downvote" onclick="toggleDownvote(event, 'vote-count-discussion-@discussion.Id', '@discussion.Id')">
+                                                    <i class="fas fa-thumbs-down"></i>
+                                                </button>
+                                            </form>
+                                            <a asp-controller="Discussions" asp-action="Details" asp-route-id="@discussion.Id" class="details-btn">
+                                                Open thread
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         }
                         else
                         {
-                            <div class="discussions-list">
-                                @foreach (var discussion in Model.DiscussionPosts)
-                                {
-                                    <div class="discussion-card">
-                                        <div class="discussion-header">
-                                            <h4 class="discussion-title">
-                                                <a href="/Discussions/Details/@discussion.Id">@discussion.Author.UserName</a>
-                                            </h4>
-                                        </div>
-                                        <div class="discussion-preview">
-                                            <p>@(discussion.Content.Length > 150 ? discussion.Content.Substring(0, 150) + "..." : discussion.Content)</p>
-                                        </div>
-                                        <div class="discussion-meta">
-                                            <span class="discussion-date"><i class="far fa-calendar-alt"></i> @discussion.CreatedAt.ToString("MMM dd, yyyy")</span>
-                                            <span class="discussion-replies"><i class="fas fa-reply"></i> @(discussion.Replies?.Count() ?? 0) replies</span>
-                                        </div>
-                                    </div>
-                                }
+                            <div class="no-reviews">
+                                <i class="fas fa-comment-slash"></i>
+                                <p>No discussions yet for this game. Start the conversation!</p>
                             </div>
                         }
                     </div>
@@ -243,24 +284,37 @@
                                 @foreach (var request in Model.GameRequests)
                                 {
                                     <div class="discussion-card">
-                                        <div class="discussion-header">
-                                            <h4 class="discussion-title">@request.Title</h4>
-                                        </div>
-                                        <div class="discussion-preview">
-                                            <p>@(request.Description?.Length > 150 ? request.Description.Substring(0, 150) + "..." : request.Description)</p>
-                                        </div>
-                                        <div class="discussion-meta">
-                                            <span class="discussion-date"><i class="far fa-calendar-alt"></i> @request.RequestedAt.ToString("MMM dd, yyyy")</span>
-                                            <span class="discussion-status"><i class="fas fa-flag"></i> @request.Status</span>
-                                            @if (request.GameCategories != null && request.GameCategories.Any())
-                                            {
-                                                <div class="category-tags">
-                                                    @foreach (var cat in request.GameCategories)
-                                                    {
-                                                        <span class="badge badge-secondary">@cat.Category</span>
-                                                    }
+                                        <div class="discussion-layout">
+                                            <img src="@request.ImageUrl" alt="@request.Title" class="discussion-thumbnail" />
+                                            <div class="discussion-content">
+                                                <div class="discussion-header">
+                                                    <h4 class="discussion-title">@request.Title</h4>
                                                 </div>
-                                            }
+                                                <div class="discussion-preview">
+                                                    <p>@(request.Description?.Length > 150 ? request.Description.Substring(0, 150) + "..." : request.Description)</p>
+                                                </div>
+
+                                                @if (request.GameCategories != null && request.GameCategories.Any())
+                                                {
+                                                    <div class="category-tags">
+                                                        @foreach (var cat in request.GameCategories)
+                                                        {
+                                                            <span class="badge badge-secondary">@cat.Category</span>
+                                                        }
+                                                    </div>
+                                                }
+
+                                                <div class="discussion-meta">
+                                                    <span class="discussion-date"><i class="far fa-calendar-alt"></i> @request.RequestedAt.ToString("MMM dd, yyyy")</span>
+                                                    @{
+                                                        string statusClass = request.Status.ToString().ToLower();
+                                                    }
+                                                    <span class="status-indicator status-@statusClass">
+                                                        <span class="status-circle"></span>
+                                                        @request.Status
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 }
