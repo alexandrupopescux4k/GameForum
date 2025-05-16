@@ -112,10 +112,10 @@
                                         <span class="review-rating">
                                             <i class="fas fa-star "></i> @review.Rating/10
                                         </span>
-                                        <span >
+                                        <span>
                                             <a asp-controller="Games" asp-action="Details" asp-route-id="@review.Game.Id" class="game-title-display">
-                                            @review.Game.Title
-                                        </a>
+                                                @review.Game.Title
+                                            </a>
                                         </span>
                                         <span class="review-date">@review.CreatedAt.ToString("MMM dd, yyyy")</span>
                                     </div>
@@ -149,10 +149,10 @@
                             </div>
                         }
                     </div>
-                
 
 
-                    
+
+
 
 
 
@@ -165,9 +165,9 @@
                                     var game = favorite.Game;
                                     <div class="game-card">
                                         <div class="game-card-inner">
-                                            <div class="game-image-container">
+                                            <div class="profile-game-image-container">
                                                 <img src="@(string.IsNullOrEmpty(game?.ImageUrl) ? "/images/game-placeholder.jpg" : game.ImageUrl)"
-                                                     alt="@game?.Title" class="game-image" />
+                                                     alt="@game?.Title" class="profile-game-image" />
                                                 <div class="game-overlay">
                                                     <a href="/Games/Details/@game?.Id" class="details-btn">Go to game</a>
                                                 </div>
