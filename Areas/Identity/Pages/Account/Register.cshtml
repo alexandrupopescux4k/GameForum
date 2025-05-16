@@ -4,13 +4,93 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
+<style>
+    :root {
+        --primary-purple: #6b46c1;
+        --light-purple: #9f7aea;
+        --dark-purple: #4c1d95;
+        --purple-hover: #805ad5;
+        --light-bg: #f9f7ff;
+    }
 
-<div class="row">
-    <div class="col-md-4">
+    body {
+        background-color: var(--light-bg);
+        font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    .register-container {
+        max-width: 450px;
+        margin: 3rem auto;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        border-radius: 10px;
+        background-color: white;
+    }
+
+    .page-title {
+        color: var(--primary-purple);
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .register-card {
+        padding: 1rem;
+        border-radius: 8px;
+        background-color: white;
+    }
+
+    .form-floating {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--light-purple);
+        box-shadow: 0 0 0 0.25rem rgba(107, 70, 193, 0.25);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-purple);
+        border-color: var(--primary-purple);
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--purple-hover);
+            border-color: var(--purple-hover);
+        }
+
+    .divider {
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 1.5rem 0;
+    }
+
+    .text-danger {
+        color: #e53e3e !important;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+        .login-link a {
+            color: var(--dark-purple);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .login-link a:hover {
+                color: var(--primary-purple);
+                text-decoration: underline;
+            }
+</style>
+
+<div class="register-container">
+    <h1 class="page-title">@ViewData["Title"]</h1>
+    <div class="register-card">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
@@ -27,38 +107,16 @@
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <div class="mb-4">
+                <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            </div>
+            <div class="divider"></div>
+            <div class="login-link">
+                <p>
+                    <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Already have an account? Log in</a>
+                </p>
+            </div>
         </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
     </div>
 </div>
 
