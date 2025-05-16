@@ -43,6 +43,13 @@ namespace GameForum.Controllers
             if (string.IsNullOrEmpty(userId) || string.IsNullOrWhiteSpace(Content))
                 return BadRequest();
 
+            // Validate RootId
+            if (RootId == 0)
+            {
+                // If RootId is 0, it might be a top-level reply, so set RootId to ReviewId
+                RootId = ReviewId;
+            }
+
             var reply = new Reply
             {
                 AuthorId = userId,
@@ -50,12 +57,12 @@ namespace GameForum.Controllers
                 CreatedAt = DateTime.UtcNow,
                 ParentPostId = ParentReplyId ?? ReviewId,
                 GameId = null,
-                VoteNumber=0,
+                VoteNumber = 0,
                 RootId = RootId
             };
 
             _replyService.AddReply(reply);
-            return RedirectToAction("Details",  new { id = RootId });
+            return RedirectToAction("Details", new { id = RootId });
         }
 
     }
