@@ -41,7 +41,7 @@ namespace GameForum.Services
         {
             return _repo.GameRepository
                 .FindAll()
-                .Include(g => g.GameCategories);
+                .Include(g => g.GameCategories).Include(r => r.Reviews);
         }
 
         public void AddGame(Game game) => _repo.GameRepository.Create(game);
