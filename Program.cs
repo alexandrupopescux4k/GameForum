@@ -81,7 +81,7 @@ using (var scope = app.Services.CreateScope())
     var roleExists = await roleManager.RoleExistsAsync("Admin");
     if (!roleExists)
     {
-        await roleManager.CreateAsync(new IdentityRole("Admin")); // d
+        await roleManager.CreateAsync(new IdentityRole("Admin")); // dd
     }
 
     // Assign role to a specific user (by email)
