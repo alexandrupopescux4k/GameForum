@@ -111,7 +111,7 @@ namespace GameForum.Controllers
             _gameRequestService.AddGame(request);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: GameRequests/Edit/5
